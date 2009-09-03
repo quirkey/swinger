@@ -1,4 +1,4 @@
 {
-    "name": "Name of your CouchApp",
-    "description": "CouchApp"
+    "name": "Swinger",
+    "description": "A simple but full featured slides/presentation app built on CouchApp + Sammy.js"
 }
