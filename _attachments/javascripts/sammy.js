@@ -172,6 +172,14 @@
       return keys;
     },
     
+    // convenience method to join as many arguments as you want 
+    // by the first argument - useful for making paths
+    join: function() {
+      var args = $.makeArray(arguments);
+      var delimiter = args.shift();
+      return args.join(delimiter);
+    },
+    
     // Shortcut to Sammy.log
     log: function() {
       Sammy.log.apply(Sammy, arguments);
@@ -848,11 +856,7 @@
       } else {
         // the template wasnt cached, we need to fetch it
         $.get(path, function(template) {
-           try {
-             rendered = $.srender(path, template, data);
-           } catch(e) {
-             context.log('Template Error: ' + e);
-           }
+           rendered = $.srender(path, template, data);
            callback.apply(context, [rendered]);
            context.trigger('changed');
         });
