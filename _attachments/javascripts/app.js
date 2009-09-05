@@ -11,6 +11,12 @@
     };
     this.database   = db;
     this.attributes = $.extend(default_doc, doc);
+  };
+  
+  Presentation.defaultCallbacks = {
+    success: function(resp) {
+      $.log('default successw')
+    }
   }
   
   $.extend(Presentation.prototype, {
