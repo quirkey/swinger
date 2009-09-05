@@ -4,8 +4,9 @@
 
 <div class="slide-edit">
   <div class="slide-form">
-    <form action="#/preso/<%= preso.attributes.id %>/edit/<%= params.slide_id %>" method="post">
-      <textarea name="slide_content"><%= slide.content %></textarea>
+    <form action="#/preso/<%= preso.attributes._id %>/edit/<%= params.slide_id %>" method="post">
+      <p><textarea name="content"><%= slide.content %></textarea></p>
+      <p><input type="submit" value="Save &amp; Next" /></p>
     </form>
   </div>
   <div class="slide-preview">
