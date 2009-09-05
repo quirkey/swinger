@@ -1,0 +1,14 @@
+<h2>Editing a Preso: <%= preso.attributes.name %></h2>
+
+<h3>Slide: #<%= slide.position %></h3>
+
+<div class="slide-edit">
+  <div class="slide-form">
+    <form action="#/preso/<%= preso.attributes.id %>/edit/<%= params.slide_id %>" method="post">
+      <textarea name="slide_content"><%= slide.content %></textarea>
+    </form>
+  </div>
+  <div class="slide-preview">
+    
+  </div>
+</div>

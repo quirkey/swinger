@@ -848,7 +848,11 @@
       } else {
         // the template wasnt cached, we need to fetch it
         $.get(path, function(template) {
-           rendered = $.srender(path, template, data);
+           try {
+             rendered = $.srender(path, template, data);
+           } catch(e) {
+             context.log('Template Error: ' + e);
+           }
            callback.apply(context, [rendered]);
            context.trigger('changed');
         });
