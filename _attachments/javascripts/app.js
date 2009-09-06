@@ -48,6 +48,7 @@
     },
     slide: function(num, update) {
       var s;
+      num = parseInt(num) - 1;
       if (this.attributes.slides[num]) {
         s = this.attributes.slides[num];
       } else {
