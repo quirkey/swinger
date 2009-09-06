@@ -56,7 +56,7 @@
           content_html: "",
           content: "",
           transition: "",
-          position: num
+          position: num + 1
         };
       }
       if (typeof update != 'undefined') {
@@ -125,9 +125,14 @@
       });
     });
     
+    this.get('#/preso/:id/display', function() {
+      this.redirect('#', 'preso', this.params.id, 'display', '1');
+    });
+    
     this.get('#/preso/:id/display/:slide_id', function(e) {
       e.withCurrentPreso(function(preso) {
-        e.partial('display.html.erb', function(display) {
+        e.preso = preso;
+        e.partial('templates/display.html.erb', function(display) {
           this.$element().html(display);
           // focus on slide #
         });
