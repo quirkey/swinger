@@ -93,13 +93,29 @@
     var total_slides = $('#slides .slide').length;
     switch(transition) {
       case 'fade':
+        $('#slides .slide').css({top: '0px', left: '0px', opacity: 0, zIndex: 0}).removeClass('active');
+        var $current = $('.slide.active'), $next = $slide(num);
+        $current
+          .css({opacity: 1, position:'absolute', top: '0px', left: '0px'})
+          .animate({opacity: 0}, function() {
+            $(this).css({position: 'static'});
+          })
+          .removeClass('active');
+        $next
+          .css({opacity: 0, position:'absolute', top: '0px', left: '0px', zIndex: 10})
+          .animate({opacity: 1})
+          .addClass('active');
       break;
       case 'slide-left':
       default:
         var total_width = total_slides * dimensions.width;
         $('#slides').css({width: total_width});
         var left = dimensions.width * (num - 1);
-        $('#slides').animate({marginLeft: -left + 'px'});
+        $('#slides')
+          .animate({marginLeft: -left + 'px'})
+          .find('.slide')
+            .removeClass('active');
+        $slide(num).addClass('active');
     }
     // slide up
     // cross fade
@@ -113,7 +129,7 @@
     this.debug = true;
     this.element_selector = '#container';
     
-    var current_preso = {};
+    var current_preso = false;
     var current_slide = 1;
     
     var display_keymap = {
@@ -124,11 +140,11 @@
       32: 'display-togglenav', // space
       27: 'display-exit' // esc
     };
-    
+        
     this.helpers({
       withCurrentPreso: function(callback) {
         var context = this;
-        if (current_preso._id == this.params.id) {
+        if (current_preso && current_preso.id() == this.params.id) {
           context.log('withCurrentPreso', 'using current', current_preso);
           callback.apply(context, [current_preso]);
         } else {
@@ -138,6 +154,12 @@
             callback.apply(context, [current_preso]);
           });
         }
+      },
+      displaySlide: function() {
+        var slide_id = parseInt(this.params.slide_id);
+        setSlidesCss();
+        goToSlide(slide_id, 'fade');
+        current_slide = slide_id;
       },
       markdown: function(text) {
         return new Showdown.converter().makeHtml(text);
@@ -183,13 +205,15 @@
     this.get('#/preso/:id/display/:slide_id', function(e) {
       e.withCurrentPreso(function(preso) {
         e.preso = preso;
-        e.partial('templates/display.html.erb', function(display) {
-          var slide_id = parseInt(e.params.slide_id);
-          this.$element().html(display);
-          setSlidesCss();
-          goToSlide(slide_id);
-          current_slide = slide_id;
-        });
+        // check if display has already been rendered
+        if ($('#display[rel="'+ preso.id() + '"]').length > 0) {
+          e.displaySlide();
+        } else {
+          e.partial('templates/display.html.erb', function(display) {
+            e.$element().html(display);
+            e.displaySlide();
+          });
+        }
       });
     });
     
@@ -246,7 +270,7 @@
       $(document)
         .bind('keydown', function(e) {
           if ($('#display').length > 0 && display_keymap[e.which]) { // display is showing
-            context.trigger(display_keymap[e.which]);
+            context.app.trigger(display_keymap[e.which], {id: $('#display').attr('rel')});
           }
         });
       
