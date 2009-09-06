@@ -60,7 +60,7 @@
       }
       if (typeof update != 'undefined') {
         // do update
-        $.extend(this.attributes.slides[num], s, update);
+        this.attributes.slides[num] = $.extend(s, update);
       } else {
         return s;
       }
@@ -100,7 +100,7 @@
       // TODO: check for validity
       var preso = new Preso({name: this.params['name']});
       preso.save(function() {
-        e.redirect('#/preso/' + this.attributes._id + "/edit/1");
+        e.redirect('#', 'preso', this.attributes._id, 'edit', '0');
       });
     });
     
@@ -119,7 +119,16 @@
         });
         preso.save(function(p) {
           var next_id = parseInt(e.params.slide_id) + 1;
-          e.redirect(e.join('/', '#', 'preso', this.attributes._id, 'edit', next_id));
+          e.redirect('#', 'preso', this.attributes._id, 'edit', next_id);
+        });
+      });
+    });
+    
+    this.get('#/preso/:id/display/:slide_id', function(e) {
+      e.withCurrentPreso(function(preso) {
+        e.partial('display.html.erb', function(display) {
+          this.$element().html(display);
+          // focus on slide #
         });
       });
     });
