@@ -1,0 +1,15 @@
+/* add styles here */
+#container {
+  width: 100%;
+}
+
+#display {
+  overflow:hidden;
+}
+
+#slides {
+  
+}
+.slide {
+  float:left;
+}

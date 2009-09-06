@@ -81,6 +81,29 @@
     $('.slide').css(dimensions);
   }
   
+  function goToSlide(num, transition) {
+    // slide left
+    var dimensions   = windowDimensions();
+    var total_slides = $('#slides .slide').length;
+    num = parseInt(num)
+    switch(transition) {
+      case 'fade':
+      break;
+      case 'slide-left':
+      default:
+        var total_width = total_slides * dimensions.width;
+        $('#slides').css({width: total_width});
+        var left = dimensions.width * (num - 1);
+        $('#slides').animate({marginLeft: -left + 'px'});
+    }
+    // slide up
+    // cross fade
+  }
+  
+  function $slide(num) {
+    return $('#slide-' + num);
+  }
+  
   var app = $.sammy(function() {
     this.debug = true;
     this.element_selector = '#container';
@@ -148,6 +171,7 @@
         e.partial('templates/display.html.erb', function(display) {
           this.$element().html(display);
           setSlidesCss();
+          goToSlide(e.params.slide_id);
           // focus on slide #
         });
       });
