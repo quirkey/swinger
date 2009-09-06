@@ -1,9 +1,13 @@
 <div id="display">
+  <div id="slides">
   <% $.each(preso.attributes.slides, function(i, slide) { %>
     <% if (slide) { %>
     <div class="slide" id="slide-<%= slide.position %>">
+      <div class="content">
 <%= slide.content_html %>
+      </div>
     </div>
     <% } %>
   <% }); %>
+  </div>
 </div>
