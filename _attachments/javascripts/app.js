@@ -252,7 +252,11 @@
     });
     
     this.bind('display-exit', function() {
-      
+      var e = this;
+      e.withCurrentPreso(function(preso) {
+        current_slide = current_slide || 1;
+        e.redirect('#', 'preso', preso.id(), 'edit', current_slide);
+      });
     });
     
     
