@@ -101,7 +101,7 @@
       // TODO: check for validity
       var preso = new Preso({name: this.params['name']});
       preso.save(function() {
-        e.redirect('#', 'preso', this.attributes._id, 'edit', '0');
+        e.redirect('#', 'preso', this.attributes._id, 'edit', '1');
       });
     });
     
