@@ -24,7 +24,9 @@ input[type="text"], input[type="password"], textarea {
 #slides {
   
 }
-
+.submit {
+  float:right;
+}
 .slide-edit {
   width: 100%;
   background: #999;
@@ -33,6 +35,18 @@ input[type="text"], input[type="password"], textarea {
   width: 48%;
   background: #AAA;
   float: left;
+}
+.slide-form p {
+  width: auto;
+  padding: 0px 0px 10px;
+}
+.slide-form form {
+  width: auto;
+  margin: 20px;
+}
+.slide-form textarea {
+  width: 99%;
+  height: 300px;
 }
 .slide-preview {
   float: left;
