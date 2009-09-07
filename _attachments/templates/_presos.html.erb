@@ -1,0 +1,13 @@
+<% $.each(presos, function(i, preso) { %>
+  <% log('preso', preso); %>
+  <% var slide = preso.slides()[0]; %>
+  <% if (slide) { %>
+  <div class="preso" title="<%= preso.title %>" rel="<%= preso.id() %>">
+    <div class="slide" id="slide-<%= slide.position %>">
+      <div class="content">
+<%= slide.content_html %>
+      </div>
+    </div>
+  </div>
+<% } %>
+<% }); %>

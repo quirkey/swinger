@@ -1,4 +1,9 @@
-/* add styles here */
+input[type="text"], input[type="password"], textarea {
+  border: 1px solid #CCC;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+}
+
 #container {
   width: 100%;
 }
@@ -10,7 +15,13 @@
 #slides {
   
 }
+
 .slide {
   float:left;
   background: #FFF;
+}
+.clear {
+  width: auto;
+  line-height: 0;
+  clear:both;
 }

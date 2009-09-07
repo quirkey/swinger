@@ -12,7 +12,7 @@
       type: "presentation" 
     };
     this.database   = db;
-    this.attributes = $.extend(default_doc, doc);
+    this.attributes = $.extend({}, default_doc, doc);
   };
   
   Preso.default_callbacks = {
@@ -33,6 +33,18 @@
       success: function(resp) {
         var p = new Preso(resp);
         success.apply(p, [p]);
+      }
+    }));
+  };
+  
+  Preso.all = function(success) {
+    db.view('swinger/presos', Preso.mergeCallbacks({
+      success: function(resp) {
+        var presos = [];
+        $.each(resp.rows, function(k, v) {
+          presos.push(new Preso(v.value));
+        });
+        success(presos);
       }
     }));
   };
@@ -168,8 +180,16 @@
       }
     });
     
-    this.get('#/', function() {
-      this.partial('templates/index.html.erb');
+    this.get('#/', function(e) {
+      this.partial('templates/index.html.erb', function(t) {
+        this.app.swap(t);
+        Preso.all(function(presos) {
+          e.presos = presos;
+          e.partial('templates/_presos.html.erb', function(t) {
+            $('#presos').html(t);
+          });
+        });
+      });
     });
     
     this.post('#/create', function(e) {
@@ -280,6 +300,10 @@
           }
         });
       
+      $('#presos .preso')
+        .live('click', function() {
+          context.redirect('#', 'preso', $(this).attr('rel'), 'edit', 1);
+        });
     });
   });
   
