@@ -1,5 +1,7 @@
 ;(function($) {
   
+  $.easing.def = 'easeInOutCubic';
+  
   var dbname = window.location.pathname.split('/')[1];
   var db     = $.couch.db(dbname); 
   
