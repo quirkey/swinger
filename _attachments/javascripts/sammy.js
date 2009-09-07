@@ -372,7 +372,6 @@
     trigger: function(name, data, context) {
       if (typeof context == 'undefined') {
         context = new this.context_prototype(this, 'bind', name, data);
-        this.log('creating new context', context);
       }
       return this.$element().triggerHandler(context.eventNamespace() + name, [context, data]);
     },

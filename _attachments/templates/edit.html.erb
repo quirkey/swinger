@@ -6,10 +6,16 @@
   <div class="slide-form">
     <form action="#/preso/<%= preso.attributes._id %>/edit/<%= params.slide_id %>" method="post">
       <p><textarea name="content"><%= slide.content %></textarea></p>
-      <p><input type="submit" value="Save &amp; Next" /></p>
+      <p>
+        <% if ((slide.position - 1) > 0) { %>
+        <button class="linked-button" name="prev" rel="#/preso/<%= preso.attributes._id %>/edit/<%= slide.position - 1 %>">Previous</button>
+        <% } %>
+        <button type="submit" class="submit default">Save &amp; Next</button>
+      </p>
     </form>
   </div>
   <div class="slide-preview">
-    
+    <div class="slide"></div>
   </div>
+  <div class="clear"></div>
 </div>

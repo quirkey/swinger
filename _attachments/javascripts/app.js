@@ -175,6 +175,14 @@
         goToSlide(slide_id, 'fade');
         current_slide = slide_id;
       },
+      drawSlidePreview: function(val) {
+        // calculate dimensions
+        var width = (windowDimensions().width / 2) - 40;
+        var height = Math.floor((width * 0.75)); 
+        $('.slide-edit .slide-preview .slide')
+            .html(this.markdown(val))
+            .css({width: width, height: height});
+      },
       markdown: function(text) {
         return new Showdown.converter().makeHtml(text);
       }
@@ -203,7 +211,10 @@
     this.get('#/preso/:id/edit/:slide_id', function(e) {
       e.withCurrentPreso(function(preso) {
         e.preso = preso;
-        e.partial('templates/edit.html.erb', {slide: e.preso.slide(e.params.slide_id)});
+        e.partial('templates/edit.html.erb', {slide: e.preso.slide(e.params.slide_id)}, function(t) {
+          e.app.swap(t);
+          e.drawSlidePreview($('.slide-edit textarea').val());
+        });
       });
     });
     
@@ -288,9 +299,7 @@
       $('.slide-form textarea')
         // live preview of slide editing
         .live('keyup', function() {
-          $(this).parents('.slide-edit')
-            .find('.slide-preview')
-              .html(context.markdown($(this).val()));
+          context.drawSlidePreview($(this).val());
         });
       
       $(document)
@@ -304,6 +313,13 @@
         .live('click', function() {
           context.redirect('#', 'preso', $(this).attr('rel'), 'edit', 1);
         });
+      
+      $('.linked-button')
+        .live('click', function(e) {
+          e.preventDefault();
+          context.redirect($(this).attr('rel'));
+        });
+        
     });
   });
   
