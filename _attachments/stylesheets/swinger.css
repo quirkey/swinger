@@ -13,7 +13,12 @@ input[type="text"], input[type="password"], textarea {
   height: 32px;
   margin: 0px 10px;
 }
-
+.nav a.logo {
+  padding: 0px 10px;
+}
+.nav a.logo:hover {
+  background: none;
+}
 #container {
   width: 100%;
 }
@@ -55,8 +60,8 @@ input[type="text"], input[type="password"], textarea {
 }
 .slide-preview .slide {
   border: 1px solid #666;
-  -webkit-box-shadow: 0 0 15px #000;
-  -moz-box-shadow: 0 0 15px #000;
+  -webkit-box-shadow: 0 0 15px #333;
+  -moz-box-shadow: 0 0 15px #333;
 }
 
 .slide {

@@ -1,7 +1,4 @@
-<h2>Editing a Preso: <%= preso.attributes.name %></h2>
-
-<h3>Slide: #<%= slide.position %></h3>
-
+<h3 class="header">Slide #<%= slide.position %></h3>
 <div class="slide-edit">
   <div class="slide-form">
     <form action="#/preso/<%= preso.attributes._id %>/edit/<%= params.slide_id %>" method="post">
