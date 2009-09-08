@@ -5,6 +5,8 @@
   var dbname = window.location.pathname.split('/')[1];
   var db     = $.couch.db(dbname); 
   
+  var default_slide_scale = {width: 1280, height: 650};
+  
   Preso = function(doc) {
     var default_doc = {
       name: "",
@@ -99,7 +101,9 @@
     var dimensions = windowDimensions()
     $('#display').css(dimensions);
     $('.slide').css(dimensions);
-  }
+    var ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
+    $('.slide .content').css({"font-size": ratio + "%"});
+  };
   
   function goToSlide(num, transition) {
     // slide left
@@ -158,14 +162,18 @@
     this.helpers({
       withCurrentPreso: function(callback) {
         var context = this;
+        var wrapped_callback = function(preso) {
+          context.setUpLinksForPreso(preso);
+          callback.apply(context, [preso]);
+        }
         if (current_preso && current_preso.id() == this.params.id) {
           context.log('withCurrentPreso', 'using current', current_preso);
-          callback.apply(context, [current_preso]);
+          wrapped_callback(current_preso);
         } else {
           Preso.find(this.params.id, function(p) {
             current_preso = p;
-            context.log('withCurrentPreso', 'found', current_preso);
-            callback.apply(context, [current_preso]);
+            context.log('withCurrentPreso', 'looked up and found', current_preso);
+            wrapped_callback(current_preso);
           });
         }
       },
@@ -182,6 +190,10 @@
         $('.slide-edit .slide-preview .slide')
             .html(this.markdown(val))
             .css({width: width, height: height});
+      },
+      setUpLinksForPreso: function(preso) {
+        $('[href="#/play"]')
+          .attr('href', this.join('/','#', 'preso', preso.id(), 'display'));
       },
       markdown: function(text) {
         return new Showdown.converter().makeHtml(text);
@@ -249,7 +261,7 @@
         }
       });
     });
-    
+        
     this.bind('display-nextslide', function() {
       var e = this;
       e.withCurrentPreso(function(preso) {
@@ -319,6 +331,12 @@
           e.preventDefault();
           context.redirect($(this).attr('rel'));
         });
+      
+      $(window).bind('resize', function() {
+        if ($('#display').length > 0) {
+          setSlidesCss();
+        }
+      });
         
     });
   });

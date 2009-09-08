@@ -2,7 +2,7 @@
   <div id="slides">
   <% $.each(preso.attributes.slides, function(i, slide) { %>
     <% if (slide) { %>
-    <div class="slide" id="slide-<%= slide.position %>">
+    <div class="slide basic" id="slide-<%= slide.position %>">
       <div class="content">
 <%= slide.content_html %>
       </div>

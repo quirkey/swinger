@@ -1,6 +1,50 @@
-.basic {
-
+.slide {
+  font-size: 42px;
 }
+.slide .content {
+  font-size: 100%;
+  padding: 0 15%;  
+}
+.slide .content h1,
+.slide .content h2,
+.slide .content h3,
+.slide .content h4,
+.slide .content h5 {
+  line-height: 150%;
+}
+.slide .content h1 {
+  font-size: 200%;
+}
+.slide .content h2 {
+  font-size: 180%;
+}
+.slide .content h3 {
+  font-size: 160%;
+}
+.slide .content h4 {
+  font-size: 140%;
+}
+.slide .content h5 {
+  font-size: 120%;
+}
+.basic {
+  font-family: "Gill Sans", Sans, sans-serif;
+  background: #010101;
+  background: -webkit-gradient(linear, left top, left bottom, from(#010101), to(#4d4a5b));
+  background: -moz-linear-gradient(left top, left bottom, from(#010101), to(#4d4a5b));
+  text-align: center;
+  color: #FFF;
+  text-shadow: 0px 2% 2% #CCC;
+  font-weight: normal;
+}
+.basic ul, .basic ol, .basic pre {
+  text-align: left;
+}
+.basic li {
+  list-style-type: disc;
+  list-style-position: inside;
+}
+
 .nakajima {
   
 }
