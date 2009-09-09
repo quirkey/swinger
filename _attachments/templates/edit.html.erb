@@ -6,7 +6,7 @@
       <p><label>Theme:</label>
         <select name="theme" class="theme-select">
           <% $.each(themes, function(i, v) { %>
-            <option value="<%= v %>"><%= v %></option>
+            <option value="<%= v %>"<% if (slide.theme == v) { %>selected="selected"<% } %>><%= v %></option>
           <% }); %>
         </select>
       <p>

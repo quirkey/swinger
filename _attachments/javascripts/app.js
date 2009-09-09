@@ -255,6 +255,7 @@
       }
     });
     
+    
     this.get('#/', function(e) {
       this.partial('templates/index.html.erb', function(t) {
         this.app.swap(t);
