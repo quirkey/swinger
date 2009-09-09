@@ -105,6 +105,12 @@
     $('.slide .content').css({"font-size": ratio + "%"});
   };
   
+  function setSlideContentRatio(dimensions) {
+    if (!dimensions) dimensions = windowDimensions();
+    var ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
+    $('.slide .content').css({"font-size": ratio + "%"});    
+  }
+  
   function goToSlide(num, transition) {
     // slide left
     var dimensions   = windowDimensions();
@@ -198,10 +204,18 @@
         // calculate dimensions
         var width = (windowDimensions().width / 2) - 40;
         var height = Math.floor((width * 0.75)); 
-        $('.slide-edit .slide-preview .slide')
-            .html(this.markdown(val))
-            .css({width: width, height: height});
+        var $content = $('.slide .content');
+        $('.slide')
+            .css({width: width, height: height})
+        $content.html(this.markdown(val));
         this.highlightCode();
+        setSlideContentRatio({width: width, height: height});
+        var content_height = $content.height();
+        var margin = Math.floor((height - content_height) / 2);
+        this.log('height', height, 'content_height', content_height, 'margin', margin);
+        if (margin > 0) {
+          $content.css({marginTop: margin + "px"});
+        }
       },
       setUpLinksForPreso: function(preso) {
         $('[href="#/play"]')
