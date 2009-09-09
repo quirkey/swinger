@@ -75,6 +75,7 @@
           content_html: "",
           content: "",
           transition: "",
+          theme: 'basic',
           position: num + 1
         };
       }
@@ -171,6 +172,11 @@
     };
         
     this.helpers({
+      themes: [
+        'basic',
+        'nakajima',
+        'quirkey'
+      ],
       withCurrentPreso: function(callback) {
         var context = this;
         var wrapped_callback = function(preso) {
@@ -216,6 +222,9 @@
         if (margin > 0) {
           $content.css({marginTop: margin + "px"});
         }
+      },
+      setSlideTheme: function(theme) {
+        $('.slide').attr('class', 'slide').addClass(theme);
       },
       setUpLinksForPreso: function(preso) {
         $('[href="#/play"]')
@@ -271,7 +280,16 @@
         e.preso = preso;
         e.partial('templates/edit.html.erb', {slide: e.preso.slide(e.params.slide_id)}, function(t) {
           e.app.swap(t);
-          e.drawSlidePreview($('.slide-edit textarea').val());
+          $('.slide-form')
+            // live preview of slide editing
+            .find('textarea')
+              .bind('keyup', function() {
+                e.drawSlidePreview($(this).val());
+              }).trigger('keyup').end()
+            .find('.theme-select')
+              .bind('change', function() {
+                e.setSlideTheme($(this).val());
+              }).triggerHandler('change');
         });
       });
     });
@@ -279,6 +297,7 @@
     this.post('#/preso/:id/edit/:slide_id', function(e) {
       e.withCurrentPreso(function(preso) {
         preso.slide(e.params.slide_id, {
+          theme: e.params['theme'],
           content: e.params['content'], 
           content_html: e.markdown(e.params['content'])
         });
@@ -354,12 +373,7 @@
     this.bind('run', function() {
       // load time
       var context = this;
-      $('.slide-form textarea')
-        // live preview of slide editing
-        .live('keyup', function() {
-          context.drawSlidePreview($(this).val());
-        });
-      
+
       $(document)
         .bind('keydown', function(e) {
           if ($('#display').length > 0 && display_keymap[e.which]) { // display is showing

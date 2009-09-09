@@ -3,6 +3,12 @@
   <div class="slide-form">
     <form action="#/preso/<%= preso.attributes._id %>/edit/<%= params.slide_id %>" method="post">
       <p><textarea name="content"><%= slide.content %></textarea></p>
+      <p><label>Theme:</label>
+        <select name="theme" class="theme-select">
+          <% $.each(themes, function(i, v) { %>
+            <option value="<%= v %>"><%= v %></option>
+          <% }); %>
+        </select>
       <p>
         <% if ((slide.position - 1) > 0) { %>
         <button class="linked-button" name="prev" rel="#/preso/<%= preso.attributes._id %>/edit/<%= slide.position - 1 %>">Previous</button>
