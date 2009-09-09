@@ -150,6 +150,11 @@
     var current_preso = false;
     var current_slide = 1;
     
+    var showdown = new Showdown.converter();
+    
+    var end_block_re = /^\s*@@@\s*$/;
+    var start_block_re = /@@@\s([\w\d]+)/;
+    
     var display_keymap = {
       37: 'display-prevslide', // left arrow
       38: 'display-prevslide', // up arrow
@@ -177,10 +182,16 @@
           });
         }
       },
+      highlightCode: function() {
+        sh_highlightDocument('javascripts/shjs/lang/', '.min.js');
+      },
       displaySlide: function() {
         var slide_id = parseInt(this.params.slide_id);
+        // hide the nav
+        $('.nav').hide();
         setSlidesCss();
         goToSlide(slide_id, 'fade');
+        this.highlightCode();
         current_slide = slide_id;
       },
       drawSlidePreview: function(val) {
@@ -190,13 +201,34 @@
         $('.slide-edit .slide-preview .slide')
             .html(this.markdown(val))
             .css({width: width, height: height});
+        this.highlightCode();
       },
       setUpLinksForPreso: function(preso) {
         $('[href="#/play"]')
           .attr('href', this.join('/','#', 'preso', preso.id(), 'display'));
       },
       markdown: function(text) {
-        return new Showdown.converter().makeHtml(text);
+        // includes special code block handling
+        var new_text = [];
+        var in_code_block = false;
+        $.each(text.split(/[\n\r]/), function(i, line) {
+          if (!in_code_block) {
+            if (line.match(start_block_re)) {
+              in_code_block = true;
+              new_text.push(line.replace(start_block_re, "<pre class=\"sh_$1\"><code>"));
+            } else {
+              new_text.push(line);
+            }
+          } else {
+            if (line.match(end_block_re)) {
+              in_code_block = false;
+              new_text.push("</code></pre>");
+            } else {
+              new_text.push("" + line);
+            }
+          }
+        });
+        return showdown.makeHtml(new_text.join("\n"));
       }
     });
     
