@@ -62,6 +62,9 @@
     id: function() {
       return this.attributes['_id'];
     },
+    uri: function() {
+      return [this.database.uri, this.id()].join('/');
+    },
     save: function(callback) {
       var self = this;
       this.database.saveDoc(this.attributes, Preso.mergeCallbacks({
@@ -134,25 +137,27 @@
     },
     setContentRatio: function(dimensions) {
       if (!dimensions) dimensions = windowDimensions();
+      Sammy.log('setContentRatio', dimensions);
       var ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
-      $('.slide .content').css({"font-size": ratio + "%"});
+      Sammy.log(ratio, $('.slide .content'));
+      $('.slide .content').css({fontSize: ratio + "%"});
+      $('.slide .content img').css({width: ratio + "%"});
     },
     setCSS: function(dimensions) {
       if (!dimensions) dimensions = windowDimensions();
       $('#display').css(dimensions);
+      Sammy.log('setCSS', dimensions);
       $('.slide').css(dimensions);
       this.setContentRatio(dimensions);
       this.setVerticalAlignment(dimensions);
       this.highlightCode();
     },
     setVerticalAlignment: function(dimensions) {
-      setTimeout(function() {
-        var $content = $('.slide .content');
-        var content_height = $content.height();
-        var margin = Math.floor((dimensions.height - content_height) / 2);
-        Sammy.log('height', dimensions.height, 'content_height', content_height, 'margin', margin);
-        if (margin > 0) { $content.css({marginTop: margin + "px"}); }
-      }, 0);
+      var $content = $('.slide .content');
+      var content_height = $content.height();
+      var margin = Math.floor((dimensions.height - content_height) / 2);
+      Sammy.log('height', dimensions.height, 'content_height', content_height, 'margin', margin);
+      if (margin > 0) { $content.css({marginTop: margin + "px"}); }
     },
     highlightCode: function() {
       sh_highlightDocument('javascripts/shjs/lang/', '.min.js');
@@ -182,7 +187,26 @@
       32: 'display-togglenav', // space
       27: 'display-exit' // esc
     };
-        
+    
+    
+    function showLoader() {
+      var dimensions = windowDimensions()
+      $('#modal-loader').css({
+        top: Math.floor((dimensions.height / 2) - 100),
+        left: Math.floor((dimensions.width / 2) - 100)
+      });
+      $('#modal-loader').show();
+    };
+    
+    function hideLoader() {
+      $('#modal-loader').hide();
+    };
+    
+    this.swap = function(newcontent) {
+      hideLoader();
+      this.$element().html(newcontent);
+    };
+    
     this.helpers({
       themes: [
         'basic',
@@ -220,8 +244,8 @@
           width: width,
           height: height
         }
+        $('.slide .content').html(this.markdown(val));  
         Slide.setCSS(dimensions);
-        $('.slide .content').html(this.markdown(val));
       },
       setSlideTheme: function(theme) {
         $('.slide').attr('class', 'slide').addClass(theme);
@@ -257,12 +281,14 @@
     
     
     this.get('#/', function(e) {
+      showLoader();
       this.partial('templates/index.html.erb', function(t) {
         this.app.swap(t);
         Preso.all(function(presos) {
           e.presos = presos;
-          e.partial('templates/_presos.html.erb', function(t) {
-            $('#presos').html(t);
+          e.partial('templates/_presos.html.erb', function(p) {
+            $('#presos').append(p);
+            Slide.setCSS({width: 300, height: 300});
           });
         });
       });
@@ -278,6 +304,7 @@
     
     this.get('#/preso/:id/edit/:slide_id', function(e) {
       $('.nav').show();
+      showLoader();
       e.withCurrentPreso(function(preso) {
         e.preso = preso;
         e.partial('templates/edit.html.erb', {slide: e.preso.slide(e.params.slide_id)}, function(t) {
@@ -338,6 +365,7 @@
         $form.find('input[name="_rev"]').val(preso.attributes._rev);
         $form.ajaxSubmit({
           url: db.uri + preso.id(),
+          iframe: true,
           success: function(resp) {
             e.log('upload complete', resp);
           }
@@ -411,9 +439,19 @@
           context.redirect($(this).attr('rel'));
         });
       
+      $('.slide-attachment')
+        .live('click', function(e) {
+          var attachment_url = $(this).attr('rel');
+          var attachment_name = $(this).text();
+          $('textarea').val($('textarea').val() + "\n![" + attachment_name + "](" + attachment_url + ")");
+          $('textarea').triggerHandler('keyup');
+        });
+      
       $(window).bind('resize', function() {
         if ($('#display').length > 0) {
-          setSlidesCss();
+          Slide.setCSS();
+        } else {
+          $('textarea').triggerHandler('keyup');
         }
       });
         

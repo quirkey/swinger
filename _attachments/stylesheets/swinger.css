@@ -19,22 +19,63 @@ input[type="text"], input[type="password"], textarea {
 .nav a.logo:hover {
   background: none;
 }
+body {
+  background: #999;
+}
 #container {
   width: 100%;
 }
 #display {
+  background: #FFF;
   overflow:hidden;
 }
-
 #slides {
   
 }
+#modal-loader {
+  background: #000;
+  opacity: 0.7;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  padding: 40px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  text-align: center;
+  z-index: 400;
+}
+
+#create {
+  background: #AAA;
+  padding: 20px;
+}
+#create input, #create button {
+  font-size: 16px;
+}
+.preso {
+  width: 300px;
+  height: 300px;
+  border: 1px solid #666;
+  -webkit-box-shadow: 0 0 15px #333;
+  -moz-box-shadow: 0 0 15px #333;
+  float:left;
+  margin: 10px;
+  cursor: pointer;
+}
+
 .submit {
   float:right;
 }
 .slide-edit {
   width: 100%;
-  background: #999;
+  color:#333;
+}
+.slide-form h3, h3.section {
+  font-size: 16px;
+  text-shadow: 0px 1px 1px #D2D2D2;
+  margin: 10px 0px;
+  padding: 0px 10px 10px;
+  border-bottom: 2px solid #999;
 }
 .slide-form {
   width: 48%;
@@ -53,10 +94,18 @@ input[type="text"], input[type="password"], textarea {
   width: 99%;
   height: 300px;
 }
+.slide-attachments {
+  margin: 20px;
+}
+.slide-attachment {
+  font-weight: normal;
+  padding: 4px 0px;
+  display:block;
+  cursor:pointer;
+}
 .slide-preview {
   float: left;
   padding: 20px;
-  background:#999;
 }
 .slide-preview .slide {
   border: 1px solid #666;
