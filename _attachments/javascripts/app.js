@@ -7,6 +7,13 @@
   
   var default_slide_scale = {width: 1280, height: 650};
   
+  function windowDimensions() {
+    return {
+      width: $(window).width(),
+      height: $(window).height()
+    };
+  };
+  
   Preso = function(doc) {
     var default_doc = {
       name: "",
@@ -91,65 +98,70 @@
     }
   });
   
-  function windowDimensions() {
-    return {
-      width: $(window).width(),
-      height: $(window).height()
-    };
-  }
   
-  function setSlidesCss() {
-    var dimensions = windowDimensions()
-    $('#display').css(dimensions);
-    $('.slide').css(dimensions);
-    var ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
-    $('.slide .content').css({"font-size": ratio + "%"});
-  };
   
-  function setSlideContentRatio(dimensions) {
-    if (!dimensions) dimensions = windowDimensions();
-    var ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
-    $('.slide .content').css({"font-size": ratio + "%"});    
-  }
-  
-  function goToSlide(num, transition) {
-    // slide left
-    var dimensions   = windowDimensions();
-    var total_slides = $('#slides .slide').length;
-    switch(transition) {
-      case 'fade':
-        $('#slides .slide').css({top: '0px', left: '0px', opacity: 0, zIndex: 0}).removeClass('active');
-        var $current = $('.slide.active'), $next = $slide(num);
-        $current
-          .css({opacity: 1, position:'absolute', top: '0px', left: '0px'})
-          .animate({opacity: 0}, function() {
-            $(this).css({position: 'static'});
-          })
-          .removeClass('active');
-        $next
-          .css({opacity: 0, position:'absolute', top: '0px', left: '0px', zIndex: 10})
-          .animate({opacity: 1})
-          .addClass('active');
-      break;
-      case 'slide-left':
-      default:
-        var total_width = total_slides * dimensions.width;
-        $('#slides').css({width: total_width});
-        var left = dimensions.width * (num - 1);
-        $('#slides')
-          .animate({marginLeft: -left + 'px'})
-          .find('.slide')
+  Slide = {
+    goTo: function(num, transition) {
+      // slide left
+      var dimensions   = windowDimensions();
+      var total_slides = $('#slides .slide').length;
+      switch(transition) {
+        case 'fade':
+          $('#slides .slide').css({top: '0px', left: '0px', opacity: 0, zIndex: 0}).removeClass('active');
+          var $current = $('.slide.active'), $next = $slide(num);
+          $current
+            .css({opacity: 1, position:'absolute', top: '0px', left: '0px'})
+            .animate({opacity: 0}, function() {
+              $(this).css({position: 'static'});
+            })
             .removeClass('active');
-        $slide(num).addClass('active');
+          $next
+            .css({opacity: 0, position:'absolute', top: '0px', left: '0px', zIndex: 10})
+            .animate({opacity: 1})
+            .addClass('active');
+        break;
+        case 'slide-left':
+        default:
+          var total_width = total_slides * dimensions.width;
+          $('#slides').css({width: total_width});
+          var left = dimensions.width * (num - 1);
+          $('#slides')
+            .animate({marginLeft: -left + 'px'})
+            .find('.slide')
+              .removeClass('active');
+          $slide(num).addClass('active');
+      }
+    },
+    setContentRatio: function(dimensions) {
+      if (!dimensions) dimensions = windowDimensions();
+      var ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
+      $('.slide .content').css({"font-size": ratio + "%"});
+    },
+    setCSS: function(dimensions) {
+      if (!dimensions) dimensions = windowDimensions();
+      $('#display').css(dimensions);
+      $('.slide').css(dimensions);
+      this.setContentRatio(dimensions)
+      this.highlightCode();
+      this.setVerticalAlignment(dimensions);
+    },
+    setVerticalAlignment: function(dimensions) {
+      var content = $('.slide .content');
+      var content_height = $content.height();
+      var margin = Math.floor((height - content_height) / 2);
+      this.log('height', height, 'content_height', content_height, 'margin', margin);
+      if (margin > 0) {
+        $content.css({marginTop: margin + "px"});
+      }
+    },
+    highlightCode: function() {
+      sh_highlightDocument('javascripts/shjs/lang/', '.min.js');
+    },
+    $slide: function(num) {
+      return $('#slide-' + num);
     }
-    // slide up
-    // cross fade
-  }
-  
-  function $slide(num) {
-    return $('#slide-' + num);
-  }
-  
+  };
+      
   var app = $.sammy(function() {
     this.debug = true;
     this.element_selector = '#container';
@@ -194,34 +206,22 @@
           });
         }
       },
-      highlightCode: function() {
-        sh_highlightDocument('javascripts/shjs/lang/', '.min.js');
-      },
       displaySlide: function() {
         var slide_id = parseInt(this.params.slide_id);
         // hide the nav
         $('.nav').hide();
-        setSlidesCss();
-        goToSlide(slide_id, 'fade');
-        this.highlightCode();
+        Slide.setCSS();
+        Slide.goTo(slide_id, 'fade');
         current_slide = slide_id;
       },
       drawSlidePreview: function(val) {
         // calculate dimensions
-        var width = (windowDimensions().width / 2) - 40;
-        var height = Math.floor((width * 0.75)); 
-        var $content = $('.slide .content');
-        $('.slide')
-            .css({width: width, height: height})
-        $content.html(this.markdown(val));
-        this.highlightCode();
-        setSlideContentRatio({width: width, height: height});
-        var content_height = $content.height();
-        var margin = Math.floor((height - content_height) / 2);
-        this.log('height', height, 'content_height', content_height, 'margin', margin);
-        if (margin > 0) {
-          $content.css({marginTop: margin + "px"});
+        var dimensions= {
+          width: ((windowDimensions().width / 2) - 40),
+          height: Math.floor((width * 0.75))
         }
+        Slide.setCSS(dimensions);
+        $('.slide .content').html(this.markdown(val));
       },
       setSlideTheme: function(theme) {
         $('.slide').attr('class', 'slide').addClass(theme);
