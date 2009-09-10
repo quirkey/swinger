@@ -1,7 +1,7 @@
 <h3 class="header">Slide #<%= slide.position %></h3>
 <div class="slide-edit">
   <div class="slide-form">
-    <form action="#/preso/<%= preso.attributes._id %>/edit/<%= params.slide_id %>" method="post">
+    <form action="#/preso/<%= preso.id() %>/edit/<%= params.slide_id %>" method="post">
       <p><textarea name="content"><%= slide.content %></textarea></p>
       <p><label>Theme:</label>
         <select name="theme" class="theme-select">
@@ -15,6 +15,12 @@
         <% } %>
         <button type="submit" class="submit default">Save &amp; Next</button>
       </p>
+    </form>
+    <h3>Upload an Image</h3>
+    <form action="#/preso/<%= preso.id() %>/upload" method="post">
+      <input type="hidden" name="_rev" />
+      <p><input type="file" name="_attachments" /></p>
+      <p><button type="submit" class="submit default">Upload</button></p>
     </form>
   </div>
   <div class="slide-preview">

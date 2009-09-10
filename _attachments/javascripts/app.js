@@ -141,18 +141,18 @@
       if (!dimensions) dimensions = windowDimensions();
       $('#display').css(dimensions);
       $('.slide').css(dimensions);
-      this.setContentRatio(dimensions)
-      this.highlightCode();
+      this.setContentRatio(dimensions);
       this.setVerticalAlignment(dimensions);
+      this.highlightCode();
     },
     setVerticalAlignment: function(dimensions) {
-      var content = $('.slide .content');
-      var content_height = $content.height();
-      var margin = Math.floor((height - content_height) / 2);
-      this.log('height', height, 'content_height', content_height, 'margin', margin);
-      if (margin > 0) {
-        $content.css({marginTop: margin + "px"});
-      }
+      setTimeout(function() {
+        var $content = $('.slide .content');
+        var content_height = $content.height();
+        var margin = Math.floor((dimensions.height - content_height) / 2);
+        Sammy.log('height', dimensions.height, 'content_height', content_height, 'margin', margin);
+        if (margin > 0) { $content.css({marginTop: margin + "px"}); }
+      }, 0);
     },
     highlightCode: function() {
       sh_highlightDocument('javascripts/shjs/lang/', '.min.js');
@@ -208,17 +208,17 @@
       },
       displaySlide: function() {
         var slide_id = parseInt(this.params.slide_id);
-        // hide the nav
-        $('.nav').hide();
         Slide.setCSS();
         Slide.goTo(slide_id, 'fade');
         current_slide = slide_id;
       },
       drawSlidePreview: function(val) {
         // calculate dimensions
+        var width = ((windowDimensions().width / 2) - 40);
+        var height = Math.floor((width * 0.75));
         var dimensions= {
-          width: ((windowDimensions().width / 2) - 40),
-          height: Math.floor((width * 0.75))
+          width: width,
+          height: height
         }
         Slide.setCSS(dimensions);
         $('.slide .content').html(this.markdown(val));
@@ -277,6 +277,7 @@
     });
     
     this.get('#/preso/:id/edit/:slide_id', function(e) {
+      $('.nav').show();
       e.withCurrentPreso(function(preso) {
         e.preso = preso;
         e.partial('templates/edit.html.erb', {slide: e.preso.slide(e.params.slide_id)}, function(t) {
@@ -314,6 +315,7 @@
     });
     
     this.get('#/preso/:id/display/:slide_id', function(e) {
+      $('.nav').hide();
       e.withCurrentPreso(function(preso) {
         e.preso = preso;
         // check if display has already been rendered
@@ -326,6 +328,22 @@
           });
         }
       });
+    });
+    
+    this.post('#/preso/:id/upload', function(e) {
+      this.log(e.params);
+      e.withCurrentPreso(function(preso) {
+        // set _rev
+        var $form = e.params['$form'];
+        $form.find('input[name="_rev"]').val(preso.attributes._rev);
+        $form.ajaxSubmit({
+          url: db.uri + preso.id(),
+          success: function(resp) {
+            e.log('upload complete', resp);
+          }
+        });
+      });
+      return false;
     });
         
     this.bind('display-nextslide', function() {

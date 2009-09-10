@@ -729,7 +729,7 @@
       $form = $(form);
       path  = $form.attr('action');
       verb  = $form.attr('method').toString().toLowerCase();
-      params = {};
+      params = {'$form': $form};
       $form.find(':input[type!=submit]').each(function() {
         params[$(this).attr('name')] = $(this).val();
       });
