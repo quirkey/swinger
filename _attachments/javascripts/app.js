@@ -63,7 +63,7 @@
       return this.attributes['_id'];
     },
     uri: function() {
-      return [this.database.uri, this.id()].join('/');
+      return [this.database.uri, this.id()].join();
     },
     save: function(callback) {
       var self = this;
@@ -111,7 +111,7 @@
       switch(transition) {
         case 'fade':
           $('#slides .slide').css({top: '0px', left: '0px', opacity: 0, zIndex: 0}).removeClass('active');
-          var $current = $('.slide.active'), $next = $slide(num);
+          var $current = $('.slide.active'), $next = this.$slide(num);
           $current
             .css({opacity: 1, position:'absolute', top: '0px', left: '0px'})
             .animate({opacity: 0}, function() {
@@ -132,7 +132,7 @@
             .animate({marginLeft: -left + 'px'})
             .find('.slide')
               .removeClass('active');
-          $slide(num).addClass('active');
+          this.$slide(num).addClass('active');
       }
     },
     setContentRatio: function(dimensions) {
@@ -362,16 +362,18 @@
       e.withCurrentPreso(function(preso) {
         // set _rev
         var $form = e.params['$form'];
+        var url = preso.uri() + "?include_docs=true";
         $form.find('input[name="_rev"]').val(preso.attributes._rev);
+        // we have to set the action == url
+        $form.attr('action', url);
         $form.ajaxSubmit({
-          url: db.uri + preso.id(),
+          url: url,
           iframe: true,
           success: function(resp) {
             e.log('upload complete', resp);
           }
         });
       });
-      return false;
     });
         
     this.bind('display-nextslide', function() {

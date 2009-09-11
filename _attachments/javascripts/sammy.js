@@ -71,16 +71,18 @@
     var args = $.makeArray(arguments);
     args.unshift("[" + Date() + "]");
     $.each(loggers, function(i, logger) {
-      setTimeout(function() {
-        logger.apply(logger, args);
-      }, 5);
+      logger.apply(Sammy, args);
     });
 	};
 	
 	if (typeof window.console != 'undefined') {
-    Sammy.addLogger(window.console.log);
+    Sammy.addLogger(function() {
+      window.console.log.apply(window.console, arguments);
+    });
   } else if (typeof console != 'undefined') {
-    Sammy.addLogger.push(console.log);
+    Sammy.addLogger.push(function() {
+      console.log.apply(console, arguments);
+    });
   }
   
   
@@ -590,6 +592,7 @@
     // Either returns the value returned by the route callback or raises a 404 Not Found error.
     //
     runRoute: function(verb, path, params) {
+      this.log('runRoute', [verb, path].join(' '));
       this.trigger('run-route', {verb: verb, path: path, params: params});
       if (typeof params == 'undefined') params = {};
 
@@ -735,7 +738,6 @@
       });
       try { // catch 404s
         returned = this.runRoute(verb, path, params);
-        this.last_location = path;
       } catch(e) {
         if (e.toString().match(/^404/) && this.silence_404) {
           return true;
@@ -874,6 +876,7 @@
         to = args[0];
       }
       this.trigger('redirect', {to: to});
+      this.app.last_location = this.path;
       return this.app.setLocation(to);
     },
     

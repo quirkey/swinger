@@ -161,7 +161,7 @@ $.fn.ajaxSubmit = function(options) {
         }
         
         var opts = $.extend({}, $.ajaxSettings, options);
-		var s = jQuery.extend(true, {}, $.extend(true, {}, $.ajaxSettings), opts);
+		    var s = jQuery.extend(true, {}, $.extend(true, {}, $.ajaxSettings), opts);
 
         var id = 'jqFormIO' + (new Date().getTime());
         var $io = $('<iframe id="' + id + '" name="' + id + '" src="about:blank" />');
