@@ -29,6 +29,16 @@
 }
 .slide .content pre {
   font-family: Inconsolata, Monaco, Courier, mono;
+  font-size: 80%;
+}
+.slide .content em {
+  font-style: italic;
+}
+.slide .content strong {
+  font-weight: bold;
+}
+.slide .content p {
+  padding: 0% 1%;
 }
 .slide blockquote {
   padding: 0 0 0 2%;
@@ -53,7 +63,9 @@
 }
 .basic li {
   list-style-type: disc;
-  list-style-position: inside;
+  list-style-position: outside;
+  font-size: 110%;
+  padding: 2% 1%;
 }
 .basic pre.sh_sourceCode{background-color:#000;color:#fff;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_keyword{color:#B26818;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_type{color:#0f0;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_string{color:#f00;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_regexp{color:#f00;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_specialchar{color:#f2f;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_comment{color:#00f;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_number{color:#f00;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_preproc{color:#f2f;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_function{color:#fff;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_url{color:#f00;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_date{color:#B26818;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_time{color:#B26818;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_file{color:#B26818;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_ip{color:#f00;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_name{color:#f00;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_variable{color:#B26818;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_oldfile{color:#f2f;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_newfile{color:#f00;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_difflines{color:#B26818;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_selector{color:#B26818;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_property{color:#B26818;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_value{color:#f00;font-weight:normal;font-style:normal;}
 

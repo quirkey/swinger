@@ -92,6 +92,8 @@ body {
 }
 .slide-form textarea {
   width: 99%;
+}
+.slide-form textarea.content-textarea {
   height: 300px;
 }
 .slide-attachments {

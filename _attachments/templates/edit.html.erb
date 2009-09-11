@@ -3,13 +3,24 @@
   <div class="slide-form">
     <h3>Slide Content</h3>
     <form action="#/preso/<%= preso.id() %>/edit/<%= params.slide_id %>" method="post">
-      <p><textarea name="content"><%= slide.content %></textarea></p>
+      <p><textarea class="content-textarea" name="content"><%= slide.content %></textarea></p>
       <p><label>Theme:</label>
         <select name="theme" class="theme-select">
           <% $.each(themes, function(i, v) { %>
             <option value="<%= v %>"<% if (slide.theme == v) { %>selected="selected"<% } %>><%= v %></option>
           <% }); %>
         </select>
+        <label>Transition:
+          <select name="transition" class="transition-select">
+            <% $.each(transitions, function(i, v) { %>
+              <option value="<%= v %>"<% if (slide.transition == v) { %>selected="selected"<% } %>><%= v %></option>
+            <% }); %>
+          </select> 
+      </p>
+      <p>
+        <label>Additional Styles:</label><br />
+        <textarea name="additional_css"><%= slide.additional_css %></textarea>
+      </p>
       <p>
         <% if ((slide.position - 1) > 0) { %>
         <button class="linked-button" name="prev" rel="#/preso/<%= preso.attributes._id %>/edit/<%= slide.position - 1 %>">Previous</button>

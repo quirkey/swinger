@@ -14,6 +14,21 @@
     };
   };
   
+  function preloadImages() {
+    var d=document; 
+    Sammy.log('preloadImages', arguments);
+    if(d.images){ 
+      if(!d.MM_p) d.MM_p=new Array();
+      var i,j=d.MM_p.length,a=arguments; 
+      for(i=0; i<a.length; i++) {
+        if (a[i].indexOf("#")!=0) { 
+          d.MM_p[j]=new Image; 
+          d.MM_p[j++].src=a[i];
+        }
+      }
+    }
+  };
+  
   Preso = function(doc) {
     var default_doc = {
       name: "",
@@ -63,7 +78,7 @@
       return this.attributes['_id'];
     },
     uri: function() {
-      return [this.database.uri, this.id()].join();
+      return [this.database.uri, this.id()].join('');
     },
     save: function(callback) {
       var self = this;
@@ -86,6 +101,7 @@
           content: "",
           transition: "",
           theme: 'basic',
+          additional_css: "",
           position: num + 1
         };
       }
@@ -124,7 +140,6 @@
             .addClass('active');
         break;
         case 'slide-left':
-        default:
           var total_width = total_slides * dimensions.width;
           $('#slides').css({width: total_width});
           var left = dimensions.width * (num - 1);
@@ -133,6 +148,11 @@
             .find('.slide')
               .removeClass('active');
           this.$slide(num).addClass('active');
+        break;
+        default: //switch
+          $('#slides .active').hide().removeClass('active');
+          this.$slide(num).addClass('active').show();
+        break;
       }
     },
     setContentRatio: function(dimensions) {
@@ -141,7 +161,10 @@
       var ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
       Sammy.log(ratio, $('.slide .content'));
       $('.slide .content').css({fontSize: ratio + "%"});
-      $('.slide .content img').css({width: ratio + "%"});
+      $('.slide .content img').each(function() {
+        var initial_width = $(this).width();
+        $(this).css('width', initial_width * (ratio / 100) + "px");
+      });
     },
     setCSS: function(dimensions) {
       if (!dimensions) dimensions = windowDimensions();
@@ -149,7 +172,7 @@
       Sammy.log('setCSS', dimensions);
       $('.slide').css(dimensions);
       this.setContentRatio(dimensions);
-      this.setVerticalAlignment(dimensions);
+      // this.setVerticalAlignment(dimensions);
       this.highlightCode();
     },
     setVerticalAlignment: function(dimensions) {
@@ -213,6 +236,11 @@
         'nakajima',
         'quirkey'
       ],
+      transitions: [
+        'switch',
+        'fade',
+        'slide-left'
+      ],
       withCurrentPreso: function(callback) {
         var context = this;
         var wrapped_callback = function(preso) {
@@ -226,15 +254,25 @@
           Preso.find(this.params.id, function(p) {
             current_preso = p;
             context.log('withCurrentPreso', 'looked up and found', current_preso);
+            // preload the preso attachments
+            if (p.attributes._attachments) {
+              var attachment_urls = [];
+              $.each(p.attributes._attachments, function(k, v) {
+                if (k.match(/(jpg|gif|png|bmp)$/)) {
+                  attachment_urls.push([p.uri(), k].join('/'));
+                }
+              });
+              preloadImages.apply(preloadImages, attachment_urls);
+            }
             wrapped_callback(current_preso);
           });
         }
       },
-      displaySlide: function() {
-        var slide_id = parseInt(this.params.slide_id);
+      displaySlide: function(slide) {
+        // Slide.setCSS();
+        Slide.goTo(slide.position, slide.transition);
         Slide.setCSS();
-        Slide.goTo(slide_id, 'fade');
-        current_slide = slide_id;
+        current_slide = slide.position;
       },
       drawSlidePreview: function(val) {
         // calculate dimensions
@@ -311,9 +349,16 @@
           e.app.swap(t);
           $('.slide-form')
             // live preview of slide editing
-            .find('textarea')
+            .find('textarea[name="content"]')
               .bind('keyup', function() {
                 e.drawSlidePreview($(this).val());
+              }).trigger('keyup').end()
+            .find('textarea[name="additional_css"]')
+              .bind('keyup', function() {
+                var area = this;
+                $('.slide').attr('style', function() {
+                  return $(this).attr('style') + ';' + $(area).val();
+                });
               }).trigger('keyup').end()
             .find('.theme-select')
               .bind('change', function() {
@@ -326,9 +371,11 @@
     this.post('#/preso/:id/edit/:slide_id', function(e) {
       e.withCurrentPreso(function(preso) {
         preso.slide(e.params.slide_id, {
+          transition: e.params['transition'],
           theme: e.params['theme'],
           content: e.params['content'], 
-          content_html: e.markdown(e.params['content'])
+          content_html: e.markdown(e.params['content']),
+          additional_css: e.params['additional_css']
         });
         preso.save(function(p) {
           var next_id = parseInt(e.params.slide_id) + 1;
@@ -347,11 +394,11 @@
         e.preso = preso;
         // check if display has already been rendered
         if ($('#display[rel="'+ preso.id() + '"]').length > 0) {
-          e.displaySlide();
+          e.displaySlide(preso.slide(e.params.slide_id));
         } else {
           e.partial('templates/display.html.erb', function(display) {
             e.$element().html(display);
-            e.displaySlide();
+            e.displaySlide(preso.slide(e.params.slide_id));
           });
         }
       });
@@ -445,15 +492,16 @@
         .live('click', function(e) {
           var attachment_url = $(this).attr('rel');
           var attachment_name = $(this).text();
-          $('textarea').val($('textarea').val() + "\n![" + attachment_name + "](" + attachment_url + ")");
-          $('textarea').triggerHandler('keyup');
+          $('textarea[name="content"]')
+             .val($('textarea[name="content"]').val() + "\n![" + attachment_name + "](" + attachment_url + ")")
+            .triggerHandler('keyup');
         });
       
       $(window).bind('resize', function() {
         if ($('#display').length > 0) {
           Slide.setCSS();
         } else {
-          $('textarea').triggerHandler('keyup');
+          $('textarea[name="content"]').triggerHandler('keyup');
         }
       });
         
