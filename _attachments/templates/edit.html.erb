@@ -7,18 +7,20 @@
       <p><label>Theme:</label>
         <select name="theme" class="theme-select">
           <% $.each(themes, function(i, v) { %>
-            <option value="<%= v %>"<% if (slide.theme == v) { %>selected="selected"<% } %>><%= v %></option>
+            <option value="<%= v %>"<% if (slide.theme == v) { %> selected="selected"<% } %>><%= v %></option>
           <% }); %>
         </select>
         <label>Transition:
           <select name="transition" class="transition-select">
             <% $.each(transitions, function(i, v) { %>
-              <option value="<%= v %>"<% if (slide.transition == v) { %>selected="selected"<% } %>><%= v %></option>
+              <option value="<%= v %>"<% if (slide.transition == v) { %> selected="selected"<% } %>><%= v %></option>
             <% }); %>
           </select> 
       </p>
       <p>
-        <label>Additional Styles:</label><br />
+        <label>Additional Styles:</label>
+      </p>
+      <p>
         <textarea name="additional_css"><%= slide.additional_css %></textarea>
       </p>
       <p>

@@ -176,6 +176,7 @@
           initial_width = $(this).width();
           $(this).data('originalWidth', initial_width);
         }
+        Sammy.log('set img width', initial_width, 'ratio', ratio);
         $(this).css('width', initial_width * (ratio / 100) + "px");
       });
     },
@@ -300,7 +301,7 @@
         Slide.setCSS(dimensions);
       },
       setSlideTheme: function(theme) {
-        $('.slide').attr('class', 'slide').addClass(theme);
+        $('.slide').attr('class', 'slide active').addClass(theme);
       },
       setUpLinksForPreso: function(preso) {
         $('[href="#/play"]')
