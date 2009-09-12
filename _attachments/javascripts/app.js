@@ -445,7 +445,13 @@
         });
       });
     });
-        
+       
+    this.post('#/preso/:id/jump', function(e) {
+      e.withCurrentPreso(function(preso) {
+        e.redirect('#', 'preso', preso.id(), 'display', this.params['num']);
+      });
+    });
+    
     this.bind('display-nextslide', function() {
       var e = this;
       e.withCurrentPreso(function(preso) {
@@ -477,7 +483,7 @@
     });
     
     this.bind('display-togglenav', function() {
-      
+      $('#navigation').toggle();
     });
     
     this.bind('display-exit', function() {

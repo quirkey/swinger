@@ -11,12 +11,12 @@
   <% }); %>
   </div>
 </div>
-<div id="navigation" class="header">
+<div id="navigation" class="header" style="display:none;">
   <button class="prev">Previous</button>
   <button class="next">Next</button>
   <div class="jump">
     <form action="#/preso/<%= preso.id() %>/jump" method="post">
-      <input type="text" size="3" class="jump-input" /> of <%= preso.attributes.slides.length %>
+      <input type="text" size="3" name="num" class="jump-input" /> of <%= preso.attributes.slides.length %>
       <button type="submit" class="default">Go!</button>
     </form>
   </div>
