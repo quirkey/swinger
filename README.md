@@ -9,7 +9,7 @@ This was created as a Demo for my talk at jQuery Conf 2009 about Sammy.js, howev
 # Requirements
 
 * A running CouchDB server
-* [CouchApp]
+* [CouchApp](http://github.com/couchapp/couchapp)
 
 # Usage
 
@@ -25,15 +25,8 @@ Swinger was greatly inspired by Pat Nakajima's [Slidedown].
 
 ### Technologies/Projects used
 
-* [Sammy.js] for frontend controller/routing
-* [CouchApp] for hosting the app in CouchDB
-* [Aristo CSS] for base buttons/styles
-* [Showdown] for Markdown
-* [SHJS] for Code higlighting
-
-  [Sammy.js]: http://code.quirkey.com/sammy
-  [CouchApp]: http://github.com/couchapp/couchapp
-  [Aristo CSS]: http://github.com/maccman/aristo/tree/master
-  [Showdown]: http://attacklab.net/showdown/
-  [SHJS]: http://shjs.sourceforge.net/
-
+* [Sammy.js](http://code.quirkey.com/sammy) for frontend controller/routing
+* [CouchApp](http://github.com/couchapp/couchapp) for hosting the app in CouchDB
+* [Aristo CSS](http://github.com/maccman/aristo/tree/master) for base buttons/styles
+* [Showdown](http://attacklab.net/showdown/) for Markdown
+* [SHJS](http://shjs.sourceforge.net/) for Code higlighting
