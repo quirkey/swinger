@@ -31,9 +31,9 @@ Swinger was greatly inspired by Pat Nakajima's [Slidedown].
 * [Showdown] for Markdown
 * [SHJS] for Code higlighting
 
-[Sammy.js]: http://code.quirkey.com/sammy
-[CouchApp]: http://github.com/couchapp/couchapp
-[Aristo CSS]: http://github.com/maccman/aristo/tree/master
-[Showdown]: http://attacklab.net/showdown/
-[SHJS]: http://shjs.sourceforge.net/
+  [Sammy.js]: http://code.quirkey.com/sammy
+  [CouchApp]: http://github.com/couchapp/couchapp
+  [Aristo CSS]: http://github.com/maccman/aristo/tree/master
+  [Showdown]: http://attacklab.net/showdown/
+  [SHJS]: http://shjs.sourceforge.net/
 
