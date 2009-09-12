@@ -178,6 +178,7 @@
       $('#display').css(dimensions);
       Sammy.log('setCSS', dimensions);
       $('.slide').css(dimensions);
+      $('#navigation').css({width: dimensions.width});
       this.setContentRatio(dimensions);
       this.setVerticalAlignment(dimensions);
       this.highlightCode();
@@ -517,6 +518,14 @@
             .triggerHandler('keyup');
         });
       
+      $('#navigation')
+        .find('.prev').live('click', function() {
+          context.app.trigger('display-prevslide', {id: $('#display').attr('rel')});
+        }).end()
+        .find('.next').live('click', function() {
+          context.app.trigger('display-nextslide', {id: $('#display').attr('rel')});
+        });
+        
       $(window).bind('resize', function() {
         if ($('#display').length > 0) {
           Slide.setCSS();
