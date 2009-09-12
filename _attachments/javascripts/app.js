@@ -160,8 +160,8 @@
       Sammy.log('setContentRatio', dimensions);
       var ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
       Sammy.log(ratio, $('.slide .content'));
-      $('.slide .content').css({fontSize: ratio + "%"});
-      $('.slide .content img').each(function() {
+      $('.slide.active .content').css({fontSize: ratio + "%"});
+      $('.slide.active .content img').each(function() {
         var initial_width = $(this).width();
         $(this).css('width', initial_width * (ratio / 100) + "px");
       });
@@ -172,11 +172,11 @@
       Sammy.log('setCSS', dimensions);
       $('.slide').css(dimensions);
       this.setContentRatio(dimensions);
-      // this.setVerticalAlignment(dimensions);
+      this.setVerticalAlignment(dimensions);
       this.highlightCode();
     },
     setVerticalAlignment: function(dimensions) {
-      var $content = $('.slide .content');
+      var $content = $('.slide.active .content');
       var content_height = $content.height();
       var margin = Math.floor((dimensions.height - content_height) / 2);
       Sammy.log('height', dimensions.height, 'content_height', content_height, 'margin', margin);
@@ -458,11 +458,15 @@
     });
     
     this.bind('display-exit', function() {
-      var e = this;
-      e.withCurrentPreso(function(preso) {
-        current_slide = current_slide || 1;
-        e.redirect('#', 'preso', preso.id(), 'edit', current_slide);
-      });
+      try {
+        var e = this;
+        e.withCurrentPreso(function(preso) {
+          current_slide = current_slide || 1;
+          e.redirect('#', 'preso', preso.id(), 'edit', current_slide);
+        });
+      } catch(error) {
+        e.log(error);
+      }
     });
     
     
