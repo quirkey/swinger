@@ -32,6 +32,11 @@ body {
 #slides {
   
 }
+iframe {
+  margin: 10px;
+  width: 95%;
+  background: #FFF;
+}
 #navigation.header {
   position: fixed;
   bottom: 0px;

@@ -284,7 +284,6 @@
         }
       },
       displaySlide: function(slide) {
-        // Slide.setCSS();
         Slide.goTo(slide.position, slide.transition);
         Slide.setCSS();
         current_slide = slide.position;
@@ -304,8 +303,11 @@
         $('.slide').attr('class', 'slide active').addClass(theme);
       },
       setUpLinksForPreso: function(preso) {
-        $('[href="#/play"]')
-          .attr('href', this.join('/','#', 'preso', preso.id(), 'display'));
+        var context = this;
+        $('.nav a.preso-link').each(function() {
+          var meth = $(this).attr('href').replace('#/', '');
+          $(this).attr('href', context.join('/','#', 'preso', preso.id(), meth));
+        });
       },
       markdown: function(text) {
         // includes special code block handling
@@ -419,6 +421,13 @@
             e.displaySlide(preso.slide(e.params.slide_id));
           });
         }
+      });
+    });
+    
+    this.get('#/preso/:id/export', function(e) {
+      e.withCurrentPreso(function(preso) {
+        e.preso = preso;
+        e.partial('templates/export.html.erb');
       });
     });
     
