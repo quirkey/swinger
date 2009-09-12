@@ -169,7 +169,13 @@
       Sammy.log(ratio, $('.slide .content'));
       $('.slide.active .content').css({fontSize: ratio + "%"});
       $('.slide.active .content img').each(function() {
-        var initial_width = $(this).width();
+        var initial_width;
+        if ($(this).data('originalWidth')) {
+          initial_width = $(this).data('originalWidth');
+        } else {
+          initial_width = $(this).width();
+          $(this).data('originalWidth', initial_width);
+        }
         $(this).css('width', initial_width * (ratio / 100) + "px");
       });
     },
