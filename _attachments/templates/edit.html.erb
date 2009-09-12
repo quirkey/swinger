@@ -29,18 +29,8 @@
         <button class="linked-button submit" name="display" rel="#/preso/<%= preso.attributes._id %>/display/<%= slide.position %>">Preview</button>
       </p>
     </form>
-    <h3>Upload an Image</h3>
-    <% if (preso.attributes._attachments) { %>
-      <ul class="slide-attachments">
-        <% $.each(preso.attributes._attachments, function(k, v) { %>
-          <li class="slide-attachment" rel="<%= join('/', preso.uri(), k) %>"><%= k %> (<%= v.content_type %>)</li>
-        <% }); %>
-      </ul>
-    <% } %>
-    <form action="#/preso/<%= preso.id() %>/upload" method="post">
-      <input type="hidden" name="_rev" />
-      <p><input type="file" name="_attachments" /><button type="submit" class="default">Upload</button></p>
-    </form>
+    <div id="upload_form">
+    </div>
   </div>
   <div class="slide-preview">
     <div class="slide active">

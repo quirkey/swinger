@@ -80,6 +80,13 @@
     uri: function() {
       return [this.database.uri, this.id()].join('');
     },
+    reload: function(callback) {
+      var preso = this;
+      Preso.find(this.id(), function(p) {
+        $.extend(preso.attributes, p.attributes);
+        callback.apply(this, [preso]);
+      });
+    },
     save: function(callback) {
       var self = this;
       this.database.saveDoc(this.attributes, Preso.mergeCallbacks({
@@ -347,6 +354,9 @@
         e.preso = preso;
         e.partial('templates/edit.html.erb', {slide: e.preso.slide(e.params.slide_id)}, function(t) {
           e.app.swap(t);
+          e.partial('templates/_upload_form.html.erb', function(data) {
+            e.$element().find('#upload_form').html(data);
+          });
           $('.slide-form')
             // live preview of slide editing
             .find('textarea[name="content"]')
@@ -418,6 +428,12 @@
           iframe: true,
           success: function(resp) {
             e.log('upload complete', resp);
+            preso.reload(function(p) {
+              e.preso = p;
+              e.partial('templates/_upload_form.html.erb', function(data) {
+                e.$element().find('#upload_form').html(data);
+              });
+            });
           }
         });
       });
