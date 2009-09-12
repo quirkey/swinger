@@ -26,6 +26,7 @@
         <button class="linked-button" name="prev" rel="#/preso/<%= preso.attributes._id %>/edit/<%= slide.position - 1 %>">Previous</button>
         <% } %>
         <button type="submit" class="submit default">Save &amp; Next</button>
+        <button class="linked-button submit" name="display" rel="#/preso/<%= preso.attributes._id %>/display/<%= slide.position %>">Preview</button>
       </p>
     </form>
     <h3>Upload an Image</h3>
@@ -42,7 +43,7 @@
     </form>
   </div>
   <div class="slide-preview">
-    <div class="slide">
+    <div class="slide active">
       <div class="content"></div>
     </div>
   </div>
