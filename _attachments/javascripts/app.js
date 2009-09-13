@@ -305,7 +305,7 @@
       setUpLinksForPreso: function(preso) {
         var context = this;
         $('.nav a.preso-link').each(function() {
-          var meth = $(this).attr('href').replace('#/', '');
+          var meth = $(this).attr('rel');
           $(this).attr('href', context.join('/','#', 'preso', preso.id(), meth));
         });
       },
