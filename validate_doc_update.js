@@ -1,8 +1,12 @@
 function (newDoc, oldDoc, userCtx) {
   if (userCtx.roles.indexOf('_admin') != -1) {
-    return;
+    return false;
   }
-  throw {
-    forbidden: "Invalid operation: existing messages cannot be modified."
-  };
+  // if (oldDoc == null) {
+  //   return validate(newDoc);
+  // }
+  // throw {
+  //   forbidden: "Invalid operation: existing messages cannot be modified."
+  // };
+  return true;
 }
