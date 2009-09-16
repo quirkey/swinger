@@ -1,12 +1,11 @@
 function (newDoc, oldDoc, userCtx) {
-  if (userCtx.roles.indexOf('_admin') != -1) {
-    return false;
+  // !code lib/validate.js
+  if (userCtx.roles.indexOf('_admin') == -1) {
+    forbidden("Sorry, you must be logged in as an admin to save this " + newDoc.type);
   }
   // if (oldDoc == null) {
   //   return validate(newDoc);
   // }
-  // throw {
-  //   forbidden: "Invalid operation: existing messages cannot be modified."
-  // };
+  // 
   return true;
 }

@@ -2,6 +2,17 @@
   
   $.easing.def = 'easeInOutCubic';
   
+  $.fn.center = function() {
+    var dimensions = windowDimensions();
+    $(this).each(function() {
+      $(this).css({
+        top: Math.floor((dimensions.height / 2) - $(this).outerHeight()),
+        left: Math.floor((dimensions.width / 2) - $(this).outerWidth())
+      });
+    });
+    return this
+  };
+  
   var dbname = window.location.pathname.split('/')[1];
   var db     = $.couch.db(dbname); 
   
@@ -29,6 +40,20 @@
     }
   };
   
+  function showNotification(status, message) {
+    var $notification = $('#modal-notification');
+    $notification
+      .attr('class', 'modal')
+      .addClass(status)   
+      .find('.message')
+        .html(message).end()
+      .find('button').one('click', function() {
+        $(this).parent().fadeOut(200);
+      }).end()
+      .center()
+      .fadeIn(400);
+  };
+  
   Preso = function(doc) {
     var default_doc = {
       name: "",
@@ -43,8 +68,9 @@
     success: function(resp) {
       Sammy.log('default success', resp);
     },
-    error: function(resp) {
-      Sammy.log('default error', resp);
+    error: function(status, error, reason) {
+      Sammy.log('default error', arguments);
+      showNotification('error', reason);
     }
   };
     
