@@ -232,8 +232,11 @@
   };
       
   var app = $.sammy(function() {
+    this.use(Sammy.Template);
     this.debug = true;
     this.element_selector = '#container';
+    this.template_engine = 'template';
+    
     
     var current_preso = false;
     var current_slide = 1;
