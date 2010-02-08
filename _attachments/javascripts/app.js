@@ -54,11 +54,55 @@
       .fadeIn(400);
   };
   
+  User = {
+    _current_user: false,
+    current: function(callback, force) {
+      var user = this;
+      if (!this._current_user || force === true) {
+        $.couch.session({
+          success: function(session) {
+            if (session.userCtx && session.userCtx.name) {
+              user._current_user = session.userCtx;
+              callback(user._current_user);
+            }
+          }
+        });
+      } else {
+        callback(user._current_user);
+      }
+    },
+    login: function(name, password, callback) {
+      $.couch.login({
+        name : name,
+        password : password,
+        success : function() {
+          User.current(callback, true);
+        },
+        error : function(code, error, reason) {
+          showNotification('error', reason);
+        }
+      });
+    },
+    logout: function(callback) {
+      var user = this;
+      $.couch.logout({
+        success : function() {
+          user._current_user = false;
+          callback();
+        },
+        error : function(code, error, reason) {
+          showNotification('error', reason);
+        }
+      });     
+    }
+  };
+  
+  
   Preso = function(doc) {
     var default_doc = {
       name: "",
       slides: [],
-      type: "presentation" 
+      type: "presentation"
     };
     this.database   = db;
     this.attributes = $.extend({}, default_doc, doc);
@@ -285,6 +329,20 @@
         'fade',
         'slide-left'
       ],
+      showLoggedIn: function(userCtx) {
+        if (userCtx && userCtx.name) {
+          $('.user-nav')
+            .find('.guest').hide().end()
+            .find('.logged-in')
+              .show()
+              .find('span')
+                .text('Logged in as ' + userCtx.name).end();
+        } else {
+          $('.user-nav')
+            .find('.logged-in').find('span').text('').hide().end();          
+            .find('.guest').show().end()
+        }
+      },
       withCurrentPreso: function(callback) {
         var context = this;
         var wrapped_callback = function(preso) {
@@ -363,6 +421,12 @@
       }
     });
     
+    this.before(function() {
+      var context = this;
+      User.current(function(user) {
+        context.showLoggedIn(user);
+      });
+    });
     
     this.get('#/', function(e) {
       showLoader();
@@ -378,9 +442,36 @@
       });
     });
     
+    this.get('#/login', function(e) {
+      e.partial('templates/login.html.erb');
+    });
+    
+    this.post('#/login', function(e) {
+      User.login(this.params['name'], this.params['password'], function(user) {
+        showNotification('success', 'Thanks for logging in ' + user.name);
+        e.redirect('#/');
+      })
+    });    
+    
+    this.get('#/logout', function(e) {
+      User.logout(function() {
+        e.showLoggedIn(false);
+        showNotification('success', "You've successfully logged out. Come back again soon!");
+        e.redirect('#/');
+      })
+    });
+
+
+    this.before({only: /create/}, function() {
+      if (!User._current_user) {
+        showNotification('error', 'Sorry, please login or signup to create a presentation.');
+        e.redirect('#/login');
+        return false;
+      }
+    });
+    
     this.post('#/create', function(e) {
-      // TODO: check for validity
-      var preso = new Preso({name: this.params['name']});
+      var preso = new Preso({name: this.params['name'], user: User._current_user.name});
       preso.save(function() {
         e.redirect('#', 'preso', this.attributes._id, 'edit', '1');
       });

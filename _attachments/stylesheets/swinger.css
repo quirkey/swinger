@@ -1,3 +1,14 @@
+body {
+  background: #999;
+}
+#container {
+  width: 100%;
+}
+#display {
+  background: #FFF;
+  overflow:hidden;
+}
+
 input[type="text"], input[type="password"], textarea {
   border: 1px solid #CCC;
   -webkit-border-radius: 3px;
@@ -19,19 +30,29 @@ input[type="text"], input[type="password"], textarea {
 .nav a.logo:hover {
   background: none;
 }
-body {
-  background: #999;
+.nav a {
+  font-weight: bold;
 }
-#container {
-  width: 100%;
+.user-nav {
+  position: absolute;
+  font-size: 12px;
+  top: 10px;
+  right: 10px;
+  width: 200px;
+  text-align: right;
+  text-shadow: 0px 1px 1px #000; 
+  color:#CCC;
 }
-#display {
-  background: #FFF;
-  overflow:hidden;
+.user-nav span {
+  padding: 0px 5px;
 }
-#slides {
-  
+.user-nav a:link,.user-nav a:visited {
+  color:#666;
 }
+.user-nav a:hover {
+  color: #FFF;
+}
+
 iframe {
   margin: 10px;
   width: 95%;
@@ -74,9 +95,16 @@ iframe {
   background: #000;
 }
 
+#modal-notification {
+  width: 300px;
+}
+
+#modal-notification.success {
+  background: #486A78;
+}
+
 #modal-notification.error {
   background: #992A20;
-  width: 300px;
 }
 
 #create {
@@ -152,6 +180,33 @@ iframe {
 .slide {
   float:left;
   background: #FFF;
+}
+
+.simple-content {
+  background: #F1F1F1;
+}
+.simple-form {
+  width: 50%;
+  min-width: 400px;
+  float:left;
+}
+.simple-form h3 {
+  text-align:left;
+}
+.simple-form form {
+  padding: 20px;
+}
+.simple-form p {
+  padding: 10px 0px 0px;
+}
+.simple-form p label {
+  width: 150px;
+  padding: 8px 0px 0px;
+  float: left;
+}
+.simple-form .submit {
+  float:none;
+  margin-left: 150px;
 }
 
 .clear {
