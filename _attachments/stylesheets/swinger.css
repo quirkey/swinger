@@ -8,6 +8,17 @@ body {
   background: #FFF;
   overflow:hidden;
 }
+#footer {
+  clear:both;
+  background: #666;
+  color: #FFF;
+  width: 100%;
+  padding: 10px;
+  font-size: 11px;
+  text-align:left;
+  position: fixed;
+  bottom: 0px;
+}
 p.description {
   line-height: 200%;
   font-weight: normal;
@@ -56,10 +67,14 @@ input[type="text"], input[type="password"], textarea {
 .user-nav span {
   padding: 0px 5px;
 }
-.user-nav a:link,.user-nav a:visited {
-  color:#666;
+.user-nav a:link, 
+.user-nav a:visited,
+#footer a:link, 
+#footer a:visited {
+  color:#999;
 }
-.user-nav a:hover {
+.user-nav a:hover,
+#footer a:hover {
   color: #FFF;
 }
 

@@ -376,10 +376,10 @@
         }
       },
       showNav: function() { 
-        $('.nav, .user-nav').show().find('.preso-link').hide();
+        $('.nav, .user-nav, #footer').show().find('.preso-link').hide();
       },
       hideNav: function() {
-        $('.nav, .user-nav').hide();
+        $('.nav, .user-nav, #footer').hide();
       },
       withCurrentPreso: function(callback) {
         var context = this;
