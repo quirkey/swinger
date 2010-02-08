@@ -376,7 +376,7 @@
         }
       },
       showNav: function() { 
-        $('.nav, .user-nav').show();
+        $('.nav, .user-nav').show().find('.preso-link').hide();
       },
       hideNav: function() {
         $('.nav, .user-nav').hide();
@@ -429,7 +429,7 @@
       },
       setUpLinksForPreso: function(preso) {
         var context = this;
-        $('.nav a.preso-link').each(function() {
+        $('.nav a.preso-link').show().each(function() {
           var meth = $(this).attr('rel');
           $(this).attr('href', context.join('/','#', 'preso', preso.id(), meth));
         });
