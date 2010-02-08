@@ -56,6 +56,9 @@
   
   User = {
     _current_user: false,
+    isLoggedIn: function() {
+      return !!this._current_user;
+    },
     current: function(callback, force) {
       var user = this;
       if (!this._current_user || force === true) {
@@ -148,6 +151,20 @@
         $.each(resp.rows, function(k, v) {
           presos.push(new Preso(v.value));
         });
+        success(presos);
+      }
+    }));
+  };
+  
+  Preso.byUser = function(name, success) {
+    db.view('swinger/presos_by_user', Preso.mergeCallbacks({
+      keys: [name],
+      success: function(resp) {
+        var presos = [];
+        $.each(resp.rows, function(k, v) {
+          presos.push(new Preso(v.value));
+        });
+        Sammy.log(name, presos);
         success(presos);
       }
     }));
@@ -442,10 +459,19 @@
       showLoader();
       this.partial('templates/index.html.erb', function(t) {
         this.app.swap(t);
+        if (User.isLoggedIn()) {
+          Preso.byUser(User._current_user.name, function(presos) {
+            e.partial('templates/_presos.html.erb', {presos: presos}, function(p) {
+              $('#presos').html(p);
+              Slide.setCSS({width: 300, height: 300});
+            });
+          })
+        } else {
+          $('.user-presos').hide();
+        }
         Preso.all(function(presos) {
-          e.presos = presos;
-          e.partial('templates/_presos.html.erb', function(p) {
-            $('#presos').append(p);
+          e.partial('templates/_presos.html.erb', {presos: presos}, function(p) {
+            $('#all-presos').html(p);
             Slide.setCSS({width: 300, height: 300});
           });
         });
@@ -492,7 +518,7 @@
     });
 
     this.before({only: /create/}, function() {
-      if (!User._current_user) {
+      if (!User.isLoggedIn()) {
         showNotification('error', 'Sorry, please login or signup to create a presentation.');
         e.redirect('#/login');
         return false;
