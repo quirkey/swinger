@@ -8,7 +8,17 @@ body {
   background: #FFF;
   overflow:hidden;
 }
-
+p.description {
+  line-height: 200%;
+  font-weight: normal;
+}
+p.description a:link, p.description a:visited {
+  color: #88D8F0;
+  font-weight:bold;
+}
+p.description a:hover {
+  color: #000;
+}
 input[type="text"], input[type="password"], textarea {
   border: 1px solid #CCC;
   -webkit-border-radius: 3px;
@@ -114,6 +124,10 @@ iframe {
 #create input, #create button {
   font-size: 16px;
 }
+#create .simple-form {
+  width: 100%
+}
+
 .preso {
   width: 300px;
   height: 300px;
@@ -124,7 +138,10 @@ iframe {
   margin: 10px;
   cursor: pointer;
 }
-
+.preso.selected {
+  -webkit-box-shadow: 0 0 15px #FFF;
+  -moz-box-shadow: 0 0 15px #FFF;
+}
 .submit {
   float:right;
 }

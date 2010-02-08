@@ -49,7 +49,7 @@
         .html(message).end()
       .find('button').one('click', function() {
         $(this).parent().fadeOut(200);
-      }).end()
+      }).focus().end()
       .center()
       .fadeIn(400);
   };
@@ -67,6 +67,9 @@
             if (session.userCtx && session.userCtx.name) {
               user._current_user = session.userCtx;
               callback(user._current_user);
+            } else {
+              user._current_user = false;
+              callback(false);
             }
           }
         });
@@ -204,7 +207,7 @@
           content_html: "",
           content: "",
           transition: "",
-          theme: 'basic',
+          theme: this.attributes.theme || 'basic',
           additional_css: "",
           position: num + 1
         };
@@ -304,6 +307,8 @@
       
   var app = $.sammy(function() {
     this.use(Sammy.Template);
+    this.use(Sammy.NestedParams);
+    
     this.debug = true;
     this.element_selector = '#container';
     this.template_engine = 'template';
@@ -369,6 +374,12 @@
             .find('.logged-in').find('span').text('').hide().end()
             .find('.guest').show().end()
         }
+      },
+      showNav: function() { 
+        $('.nav, .user-nav').show();
+      },
+      hideNav: function() {
+        $('.nav, .user-nav').hide();
       },
       withCurrentPreso: function(callback) {
         var context = this;
@@ -448,12 +459,25 @@
       }
     });
     
-    this.before(function() {
+    this.around(function(callback) {
       var context = this;
       User.current(function(user) {
         context.showLoggedIn(user);
+        callback();
       });
     });
+    
+    this.before({only: /\#\/(create|new)/}, function() {
+       if (!User.isLoggedIn()) {
+         showNotification('error', 'Sorry, please login or signup to create a presentation.');
+         e.redirect('#/login');
+         return false;
+       }
+     });
+
+   this.before({except: /display/}, function() {
+     this.showNav();
+   });
     
     this.get('#/', function(e) {
       showLoader();
@@ -516,24 +540,29 @@
         // invalid
       }
     });
-
-    this.before({only: /create/}, function() {
-      if (!User.isLoggedIn()) {
-        showNotification('error', 'Sorry, please login or signup to create a presentation.');
-        e.redirect('#/login');
-        return false;
-      }
+    
+    this.get('#/new', function(e) {
+      this.partial('templates/new.html.erb', function(html) {
+        this.app.swap(html);
+        Slide.setCSS({width: 150, height: 150});
+        $('.preso').click(function() {
+          Sammy.log('click preso', this);
+          var theme = $(this).attr('data-theme');
+          $('input[name="preso[theme]"][value="'+ theme + '"]').attr('checked', 'checked');
+          $(this).addClass('selected');
+          $(this).siblings('.preso').removeClass('selected');
+        })
+      });
     });
     
     this.post('#/create', function(e) {
-      var preso = new Preso({name: this.params['name'], user: User._current_user.name});
+      var preso = new Preso($.extend({}, e.params['preso'], {user: User._current_user.name}));
       preso.save(function() {
         e.redirect('#', 'preso', this.attributes._id, 'edit', '1');
       });
     });
     
     this.get('#/preso/:id/edit/:slide_id', function(e) {
-      $('.nav').show();
       showLoader();
       e.withCurrentPreso(function(preso) {
         e.preso = preso;
@@ -584,7 +613,7 @@
     });
     
     this.get('#/preso/:id/display/:slide_id', function(e) {
-      $('.nav').hide();
+      this.hideNav();
       e.withCurrentPreso(function(preso) {
         e.preso = preso;
         // check if display has already been rendered
@@ -695,7 +724,7 @@
           }
         });
       
-      $('#presos .preso')
+      $('.presos .preso')
         .live('click', function() {
           context.redirect('#', 'preso', $(this).attr('rel'), 'edit', 1);
         });
