@@ -75,10 +75,10 @@
       $.couch.login({
         name : name,
         password : password,
-        success : function() {
+        success: function() {
           User.current(callback, true);
         },
-        error : function(code, error, reason) {
+        error: function(code, error, reason) {
           showNotification('error', reason);
         }
       });
@@ -86,14 +86,24 @@
     logout: function(callback) {
       var user = this;
       $.couch.logout({
-        success : function() {
+        success: function() {
           user._current_user = false;
           callback();
         },
-        error : function(code, error, reason) {
+        error: function(code, error, reason) {
           showNotification('error', reason);
         }
       });     
+    },
+    signup: function(name, email, password, callback) {
+      $.couch.signup({name: name, email: email}, password, {
+        success: function() {
+          User.login(name, password, callback);
+        },
+        error: function(code, error, reason) {
+          showNotification('error', reason);
+        }
+      })
     }
   };
   
@@ -339,7 +349,7 @@
                 .text('Logged in as ' + userCtx.name).end();
         } else {
           $('.user-nav')
-            .find('.logged-in').find('span').text('').hide().end();          
+            .find('.logged-in').find('span').text('').hide().end()
             .find('.guest').show().end()
         }
       },
@@ -461,6 +471,25 @@
       })
     });
 
+    this.post('#/signup', function(e) {
+      // validate
+      if (this.params.has('name') && 
+          this.params.has('email') && 
+          this.params.has('password') && 
+          this.params.has('password_confirmation') &&
+          this.params['password'] === this.params['password_confirmation']) {
+            
+        // create
+        User.signup(this.params['name'], this.params['email'], this.params['password'], function() {
+          showNotification('success', 'Thanks for signing up! You can start making presentations now.');
+          e.redirect('#/');
+        });
+      } else {
+        showNotification('error', 'Please fill out the entire form.');
+        this.redirect('#/login');
+        // invalid
+      }
+    });
 
     this.before({only: /create/}, function() {
       if (!User._current_user) {

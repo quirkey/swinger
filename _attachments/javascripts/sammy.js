@@ -131,6 +131,10 @@
       return keys;
     },
     
+    has: function(key) {
+      return this[key] && $.trim(this[key].toString()) != '';
+    },
+    
     // convenience method to join as many arguments as you want 
     // by the first argument - useful for making paths
     join: function() {
