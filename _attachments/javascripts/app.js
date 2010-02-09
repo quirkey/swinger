@@ -18,6 +18,35 @@
   
   var default_slide_scale = {width: 1280, height: 650};
   
+  var showdown = new Showdown.converter();
+  
+  var end_block_re = /^\s*@@@\s*$/;
+  var start_block_re = /@@@\s([\w\d]+)/;
+  
+  function markdown(text) {
+    // includes special code block handling
+    var new_text = [];
+    var in_code_block = false;
+    $.each(text.split(/[\n\r]/), function(i, line) {
+      if (!in_code_block) {
+        if (line.match(start_block_re)) {
+          in_code_block = true;
+          new_text.push(line.replace(start_block_re, "<pre class=\"sh_$1\"><code>"));
+        } else {
+          new_text.push(line);
+        }
+      } else {
+        if (line.match(end_block_re)) {
+          in_code_block = false;
+          new_text.push("</code></pre>");
+        } else {
+          new_text.push("" + line);
+        }
+      }
+    });
+    return showdown.makeHtml(new_text.join("\n"));
+  };
+  
   function windowDimensions() {
     return {
       width: $(window).width(),
@@ -276,7 +305,8 @@
       }
     },
     setContent: function(content) {
-      this.$element.html(content);
+      Sammy.log('setContent', content, this.$element.find('.content'));
+      this.$element.find('.content').html(content);
     },
     setTheme: function(theme) {
       this.$element.attr('class', 'slide active').addClass(theme);
@@ -284,7 +314,7 @@
     setContentRatio: function(dimensions) {
       if (!dimensions) dimensions = windowDimensions();
       var ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
-      Sammy.log('setContentRatio', dimensions);
+      Sammy.log('setContentRatio', dimensions, ratio);
       this.$element
         .find('.content').css({fontSize: ratio + "%"})
         .find('img').each(function() {
@@ -319,6 +349,14 @@
     highlightCode: function() {
       sh_highlightDocument('javascripts/shjs/lang/', '.min.js');
     },
+    drawPreview: function(val) {
+      // calculate dimensions
+      var width = ((windowDimensions().width / 2) - 40),
+          height = Math.floor((width * 0.75)),
+          dimensions= {width: width, height: height};
+      this.setContent(markdown(val));  
+      this.setCSS(dimensions);
+    },
     $slide: function(num) {
       return this.$element.filter('#slide-' + num);
     }
@@ -335,12 +373,7 @@
     
     var current_preso = false;
     var current_slide = 1;
-    
-    var showdown = new Showdown.converter();
-    
-    var end_block_re = /^\s*@@@\s*$/;
-    var start_block_re = /@@@\s([\w\d]+)/;
-    
+        
     var display_keymap = {
       37: 'display-prevslide', // left arrow
       38: 'display-prevslide', // up arrow
@@ -381,6 +414,7 @@
         'fade',
         'slide-left'
       ],
+      markdown: markdown,
       showLoggedIn: function(userCtx) {
         if (userCtx && userCtx.name) {
           $('.user-nav')
@@ -434,44 +468,12 @@
         slide.setCSS();
         current_slide = slide.position;
       },
-      drawSlidePreview: function(val) {
-        // calculate dimensions
-        var width = ((windowDimensions().width / 2) - 40),
-            height = Math.floor((width * 0.75)),
-            dimensions= {width: width, height: height},
-            slide = new Slide('.slide-preview .slide');
-        slide.setContent(this.markdown(val));  
-        slide.setCSS(dimensions);
-      },
       setUpLinksForPreso: function(preso) {
         var context = this;
         $('.nav a.preso-link').show().each(function() {
           var meth = $(this).attr('rel');
           $(this).attr('href', context.join('/','#', 'preso', preso.id(), meth));
         });
-      },
-      markdown: function(text) {
-        // includes special code block handling
-        var new_text = [];
-        var in_code_block = false;
-        $.each(text.split(/[\n\r]/), function(i, line) {
-          if (!in_code_block) {
-            if (line.match(start_block_re)) {
-              in_code_block = true;
-              new_text.push(line.replace(start_block_re, "<pre class=\"sh_$1\"><code>"));
-            } else {
-              new_text.push(line);
-            }
-          } else {
-            if (line.match(end_block_re)) {
-              in_code_block = false;
-              new_text.push("</code></pre>");
-            } else {
-              new_text.push("" + line);
-            }
-          }
-        });
-        return showdown.makeHtml(new_text.join("\n"));
       }
     });
     
@@ -512,7 +514,7 @@
         Preso.all(function(presos) {
           e.partial('templates/_presos.html.erb', {presos: presos}, function(p) {
             $('#all-presos').html(p);
-            new Slide('#presos .slide').setCSS({width: 300, height: 300});
+            new Slide('#all-presos .slide').setCSS({width: 300, height: 300});
           });
         });
       });
@@ -583,26 +585,27 @@
       e.withCurrentPreso(function(preso) {
         e.preso = preso;
         e.partial('templates/edit.html.erb', {slide: e.preso.slide(e.params.slide_id)}, function(t) {
-          e.app.swap(t);
+          e.app.swap(t);          
           e.partial('templates/_upload_form.html.erb', function(data) {
             e.$element().find('#upload_form').html(data);
           });
+          var slide_preview = new Slide('.slide-preview .slide');
           $('.slide-form')
             // live preview of slide editing
             .find('textarea[name="slide[content]"]')
               .bind('keyup', function() {
-                e.drawSlidePreview($(this).val());
+                slide_preview.drawPreview($(this).val());
               }).trigger('keyup').end()
             .find('textarea[name="slide[additional_css]"]')
               .bind('keyup', function() {
                 var area = this;
-                $('.slide').attr('style', function() {
+                slide_preview.$element.attr('style', function() {
                   return $(this).attr('style') + ';' + $(area).val();
                 });
               }).trigger('keyup').end()
             .find('.theme-select')
               .bind('change', function() {
-                e.setSlideTheme($(this).val());
+                slide_preview.setTheme($(this).val());
               }).triggerHandler('change');
         });
       });
