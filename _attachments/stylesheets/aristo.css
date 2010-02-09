@@ -235,7 +235,7 @@ nav, .nav {
   height: 33px;
   background: #44474b;
   background: -webkit-gradient(linear, left top, left bottom, from(#030303), to(#44474b));
-  background: -moz-linear-gradient(left top, left bottom, from(#030303), to(#44474b));
+  background: -moz-linear-gradient(left top, from(#030303), to(#44474b));
   clear: both;
 }
 nav a, .nav a {

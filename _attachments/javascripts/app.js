@@ -581,11 +581,11 @@
           });
           $('.slide-form')
             // live preview of slide editing
-            .find('textarea[name="content"]')
+            .find('textarea[name="slide[content]"]')
               .bind('keyup', function() {
                 e.drawSlidePreview($(this).val());
               }).trigger('keyup').end()
-            .find('textarea[name="additional_css"]')
+            .find('textarea[name="slide[additional_css]"]')
               .bind('keyup', function() {
                 var area = this;
                 $('.slide').attr('style', function() {
@@ -602,13 +602,7 @@
     
     this.post('#/preso/:id/edit/:slide_id', function(e) {
       e.withCurrentPreso(function(preso) {
-        preso.slide(e.params.slide_id, {
-          transition: e.params['transition'],
-          theme: e.params['theme'],
-          content: e.params['content'], 
-          content_html: e.markdown(e.params['content']),
-          additional_css: e.params['additional_css']
-        });
+        preso.slide(e.params.slide_id, e.params['slide']);
         preso.save(function(p) {
           var next_id = parseInt(e.params.slide_id) + 1;
           e.redirect('#', 'preso', this.attributes._id, 'edit', next_id);
