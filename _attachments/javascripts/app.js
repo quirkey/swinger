@@ -25,6 +25,10 @@
     };
   };
   
+  function timestamp() {
+    return Math.round(new Date().getTime() / 1000);
+  }
+  
   function preloadImages() {
     var d=document; 
     Sammy.log('preloadImages', arguments);
@@ -149,6 +153,7 @@
   
   Preso.all = function(success) {
     db.view('swinger/presos', Preso.mergeCallbacks({
+      descending: true,
       success: function(resp) {
         var presos = [];
         $.each(resp.rows, function(k, v) {
@@ -162,6 +167,7 @@
   Preso.byUser = function(name, success) {
     db.view('swinger/presos_by_user', Preso.mergeCallbacks({
       keys: [name],
+      descending: true,
       success: function(resp) {
         var presos = [];
         $.each(resp.rows, function(k, v) {
@@ -189,6 +195,7 @@
     },
     save: function(callback) {
       var self = this;
+      this.attributes.updated_at = timestamp();
       this.database.saveDoc(this.attributes, Preso.mergeCallbacks({
         success: function(resp) {
           Sammy.log('preso.save', self, resp);
