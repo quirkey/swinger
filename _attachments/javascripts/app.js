@@ -166,7 +166,7 @@
   
   Preso.byUser = function(name, success) {
     db.view('swinger/presos_by_user', Preso.mergeCallbacks({
-      keys: [name],
+      endkey: [name],
       descending: true,
       success: function(resp) {
         var presos = [];
