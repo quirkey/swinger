@@ -10,7 +10,7 @@
             <option value="<%= v %>"<% if (slide.theme == v) { %> selected="selected"<% } %>><%= v %></option>
           <% }); %>
         </select>
-        <label>Transition:
+        <label>Transition:</label>
           <select name="transition" class="transition-select">
             <% $.each(transitions, function(i, v) { %>
               <option value="<%= v %>"<% if (slide.transition == v) { %> selected="selected"<% } %>><%= v %></option>

@@ -354,7 +354,8 @@
       themes: [
         'basic',
         'nakajima',
-        'quirkey'
+        'quirkey',
+        'nakajima-black'
       ],
       transitions: [
         'switch',
@@ -635,7 +636,7 @@
       });
     });
     
-    this.post('#/preso/:id/upload', function(e) {
+    this.put('#/preso/:id/upload', function(e) {
       this.log(e.params);
       e.withCurrentPreso(function(preso) {
         // set _rev

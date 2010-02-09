@@ -3,7 +3,7 @@
 }
 .slide .content {
   font-size: 100%;
-  padding: 0 15%;  
+  padding: 0 10%;  
 }
 .slide .content h1,
 .slide .content h2,
@@ -39,9 +39,11 @@
 }
 .slide .content p {
   padding: 0% 1%;
+  line-height: 150%;
 }
 .slide blockquote {
   padding: 0 0 0 2%;
+  line-height: 150%;
   font-style: italic;
 }
 .slide ul, .slide ol, .slide pre {
@@ -79,8 +81,40 @@
   color: #111;
   background: #fff;
 }
+.slide.nakajima .content strong {
+  color: #5E9FBF;
+  font-weight: bold;
+}
+.slide.nakajima .content em {
+  font-weight: bold;
+  font-style: normal;
+  color:#E45467;
+}
 
 .nakajima pre.sh_sourceCode{background-color:#fff;color:#000;font-weight:normal;font-style:normal;}.nakajima pre.sh_sourceCode .sh_keyword{color:#00f;font-weight:bold;font-style:normal;}.nakajima pre.sh_sourceCode .sh_type{color:#00f;font-weight:normal;font-style:normal;}.nakajima pre.sh_sourceCode .sh_string{color:#f00;font-weight:normal;font-style:normal;}.nakajima pre.sh_sourceCode .sh_regexp{color:#f00;font-weight:normal;font-style:normal;}.nakajima pre.sh_sourceCode .sh_specialchar{color:#C42DA8;font-weight:normal;font-style:normal;}.nakajima pre.sh_sourceCode .sh_comment{color:#666;font-weight:normal;font-style:italic;}.nakajima pre.sh_sourceCode .sh_number{color:#a900a9;font-weight:normal;font-style:normal;}.nakajima pre.sh_sourceCode .sh_preproc{color:#00b800;font-weight:normal;font-style:normal;}.nakajima pre.sh_sourceCode .sh_symbol{color:#f00;font-weight:normal;font-style:normal;}.nakajima pre.sh_sourceCode .sh_function{color:#000;font-weight:bold;font-style:normal;}.nakajima pre.sh_sourceCode .sh_cbracket{color:#f00;font-weight:normal;font-style:normal;}.nakajima pre.sh_sourceCode .sh_url{color:#f00;font-weight:normal;font-style:normal;}.nakajima pre.sh_sourceCode .sh_date{color:#00f;font-weight:bold;font-style:normal;}.nakajima pre.sh_sourceCode .sh_time{color:#00f;font-weight:bold;font-style:normal;}.nakajima pre.sh_sourceCode .sh_file{color:#00f;font-weight:bold;font-style:normal;}.nakajima pre.sh_sourceCode .sh_ip{color:#f00;font-weight:normal;font-style:normal;}.nakajima pre.sh_sourceCode .sh_name{color:#f00;font-weight:normal;font-style:normal;}.nakajima pre.sh_sourceCode .sh_variable{color:#ec7f15;font-weight:normal;font-style:normal;}.nakajima pre.sh_sourceCode .sh_oldfile{color:#C42DA8;font-weight:normal;font-style:normal;}.nakajima pre.sh_sourceCode .sh_newfile{color:#f00;font-weight:normal;font-style:normal;}.nakajima pre.sh_sourceCode .sh_difflines{color:#00f;font-weight:bold;font-style:normal;}.nakajima pre.sh_sourceCode .sh_selector{color:#ec7f15;font-weight:normal;font-style:normal;}.nakajima pre.sh_sourceCode .sh_property{color:#00f;font-weight:bold;font-style:normal;}.nakajima pre.sh_sourceCode .sh_value{color:#f00;font-weight:normal;font-style:normal;}
+
+
+/******************************************************
+ *  nakajima-black                 *
+\*****************************************************/
+
+.nakajima-black {
+  font-family: Helvetica;
+  color: #FFF;
+  background: #000;
+}
+.slide.nakajima-black .content strong {
+  color: #5E9FBF;
+  font-weight: bold;
+}
+.slide.nakajima-black .content em {
+  font-weight: bold;
+  font-style: normal;
+  color:#E45467;
+}
+
+.nakajima-black pre.sh_sourceCode{background-color:#000;color:#fff;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_keyword{color:#B26818;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_type{color:#0f0;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_string{color:#f00;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_regexp{color:#f00;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_specialchar{color:#f2f;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_comment{color:#00f;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_number{color:#f00;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_preproc{color:#f2f;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_function{color:#fff;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_url{color:#f00;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_date{color:#B26818;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_time{color:#B26818;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_file{color:#B26818;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_ip{color:#f00;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_name{color:#f00;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_variable{color:#B26818;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_oldfile{color:#f2f;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_newfile{color:#f00;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_difflines{color:#B26818;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_selector{color:#B26818;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_property{color:#B26818;font-weight:normal;font-style:normal;}.basic pre.sh_sourceCode .sh_value{color:#f00;font-weight:normal;font-style:normal;}
+
 
 /******************************************************
  *  quirkey                 *

@@ -6,7 +6,7 @@
     <% }); %>
   </ul>
 <% } %>
-<form action="#/preso/<%= preso.id() %>/upload" method="post">
+<form action="#/preso/<%= preso.id() %>/upload" method="PUT">
   <input type="hidden" name="_rev" />
   <p><input type="file" name="_attachments" /><button type="submit" class="default">Upload</button></p>
 </form>
