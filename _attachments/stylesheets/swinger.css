@@ -209,6 +209,15 @@ iframe {
   -moz-box-shadow: 0 0 15px #333;
 }
 
+.slide-sort {
+  width: 200px;
+}
+.slide-sort .slide {
+  width: 180px;
+  height: 180px;
+}
+
+
 .slide {
   float:left;
   background: #FFF;

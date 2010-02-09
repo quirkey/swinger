@@ -1,5 +1,16 @@
 <h3 class="header"><%= preso.attributes.name %>: Slide #<%= slide.position %></h3>
 <div class="slide-edit">
+  <div class="slide-sort">
+    <div class="slides">
+    <% $.each(preso.attributes.slides, function(i, sort_slide) { %>
+      <% if (sort_slide) { %>
+      <div class="slide <%= sort_slide.theme %>" id="sort-slide-<%= sort_slide.position %>" style="<%= sort_slide.additional_css %>">
+        <div class="content"><%= sort_slide.content_html %></div>
+      </div>
+      <% } %>
+    <% }); %>
+    </div>
+  </div>
   <div class="slide-form">
     <h3>Slide Content</h3>
     <form action="#/preso/<%= preso.id() %>/edit/<%= params.slide_id %>" method="post">

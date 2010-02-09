@@ -232,16 +232,22 @@
   });
   
   
+  Slide = function(selector) {
+    this.selector = selector;
+    this.$element  = $(selector);
+  };
   
-  Slide = {
+  $.extend(Slide.prototype, {
     goTo: function(num, transition) {
       // slide left
       var dimensions   = windowDimensions();
-      var total_slides = $('#slides .slide').length;
+      var total_slides = this.$element.length;
       switch(transition) {
         case 'fade':
-          $('#slides .slide').css({top: '0px', left: '0px', opacity: 0, zIndex: 0}).removeClass('active');
-          var $current = $('.slide.active'), $next = this.$slide(num);
+          this.$element.css({top: '0px', left: '0px', opacity: 0, zIndex: 0}).removeClass('active');
+          var $current = this.$element.filter('.active'), 
+              $next = this.$slide(num);
+              
           $current
             .css({opacity: 1, position:'absolute', top: '0px', left: '0px'})
             .animate({opacity: 0}, function() {
@@ -264,43 +270,49 @@
           this.$slide(num).addClass('active');
         break;
         default: //switch
-          $('#slides .active').hide().removeClass('active');
+          this.$element.filter('.active').hide().removeClass('active');
           this.$slide(num).addClass('active').show();
         break;
       }
     },
+    setContent: function(content) {
+      this.$element.html(content);
+    },
+    setTheme: function(theme) {
+      this.$element.attr('class', 'slide active').addClass(theme);
+    },
     setContentRatio: function(dimensions) {
       if (!dimensions) dimensions = windowDimensions();
-      Sammy.log('setContentRatio', dimensions);
       var ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
-      Sammy.log(ratio, $('.slide .content'));
-      $('.slide.active .content').css({fontSize: ratio + "%"});
-      $('.slide.active .content img').each(function() {
-        var initial_width;
-        if ($(this).data('originalWidth')) {
-          initial_width = $(this).data('originalWidth');
-        } else {
-          initial_width = $(this).width();
-          $(this).data('originalWidth', initial_width);
-        }
-        Sammy.log('set img width', initial_width, 'ratio', ratio);
-        $(this).css('width', initial_width * (ratio / 100) + "px");
-      });
+      Sammy.log('setContentRatio', dimensions);
+      this.$element
+        .find('.content').css({fontSize: ratio + "%"})
+        .find('img').each(function() {
+          var initial_width;
+          if ($(this).data('originalWidth')) {
+            initial_width = $(this).data('originalWidth');
+          } else {
+            initial_width = $(this).width();
+            $(this).data('originalWidth', initial_width);
+          }
+          Sammy.log('set img width', initial_width, 'ratio', ratio);
+          $(this).css('width', initial_width * (ratio / 100) + "px");
+        });
     },
     setCSS: function(dimensions) {
       if (!dimensions) dimensions = windowDimensions();
       $('#display').css(dimensions);
       Sammy.log('setCSS', dimensions);
-      $('.slide').css(dimensions);
+      this.$element.css(dimensions);
       $('#navigation').css({width: dimensions.width});
       this.setContentRatio(dimensions);
       this.setVerticalAlignment(dimensions);
       this.highlightCode();
     },
     setVerticalAlignment: function(dimensions) {
-      var $content = $('.slide.active .content');
-      var content_height = $content.height();
-      var margin = Math.floor((dimensions.height - content_height) / 2);
+      var $content = this.$element.find('.content'),
+          content_height = $content.height(),
+          margin = Math.floor((dimensions.height - content_height) / 2);
       Sammy.log('height', dimensions.height, 'content_height', content_height, 'margin', margin);
       if (margin > 0) { $content.css({marginTop: margin + "px"}); }
     },
@@ -308,9 +320,9 @@
       sh_highlightDocument('javascripts/shjs/lang/', '.min.js');
     },
     $slide: function(num) {
-      return $('#slide-' + num);
+      return this.$element.filter('#slide-' + num);
     }
-  };
+  });;
       
   var app = $.sammy(function() {
     this.use(Sammy.Template);
@@ -417,23 +429,19 @@
         }
       },
       displaySlide: function(slide) {
-        Slide.goTo(slide.position, slide.transition);
-        Slide.setCSS();
+        var slide = new Slide('#display .slide');
+        slide.goTo(slide.position, slide.transition);
+        slide.setCSS();
         current_slide = slide.position;
       },
       drawSlidePreview: function(val) {
         // calculate dimensions
-        var width = ((windowDimensions().width / 2) - 40);
-        var height = Math.floor((width * 0.75));
-        var dimensions= {
-          width: width,
-          height: height
-        }
-        $('.slide .content').html(this.markdown(val));  
-        Slide.setCSS(dimensions);
-      },
-      setSlideTheme: function(theme) {
-        $('.slide').attr('class', 'slide active').addClass(theme);
+        var width = ((windowDimensions().width / 2) - 40),
+            height = Math.floor((width * 0.75)),
+            dimensions= {width: width, height: height},
+            slide = new Slide('.slide-preview .slide');
+        slide.setContent(this.markdown(val));  
+        slide.setCSS(dimensions);
       },
       setUpLinksForPreso: function(preso) {
         var context = this;
@@ -495,7 +503,7 @@
           Preso.byUser(User._current_user.name, function(presos) {
             e.partial('templates/_presos.html.erb', {presos: presos}, function(p) {
               $('#presos').html(p);
-              Slide.setCSS({width: 300, height: 300});
+              new Slide('#presos .slide').setCSS({width: 300, height: 300});
             });
           })
         } else {
@@ -504,7 +512,7 @@
         Preso.all(function(presos) {
           e.partial('templates/_presos.html.erb', {presos: presos}, function(p) {
             $('#all-presos').html(p);
-            Slide.setCSS({width: 300, height: 300});
+            new Slide('#presos .slide').setCSS({width: 300, height: 300});
           });
         });
       });
@@ -552,7 +560,7 @@
     this.get('#/new', function(e) {
       this.partial('templates/new.html.erb', function(html) {
         this.app.swap(html);
-        Slide.setCSS({width: 150, height: 150});
+        new Slide('.slide').setCSS({width: 150, height: 150});
         $('.preso').click(function() {
           Sammy.log('click preso', this);
           var theme = $(this).attr('data-theme');
@@ -756,7 +764,7 @@
         
       $(window).bind('resize', function() {
         if ($('#display').length > 0) {
-          Slide.setCSS();
+          new Slide('#display .slide').setCSS();
         } else {
           $('textarea[name="content"]').triggerHandler('keyup');
         }
