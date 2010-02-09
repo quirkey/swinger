@@ -270,7 +270,9 @@
     goTo: function(num, transition) {
       // slide left
       var dimensions   = windowDimensions();
-      var total_slides = this.$element.length;
+          total_slides = this.$element.length,
+          slide = this;
+          
       switch(transition) {
         case 'fade':
           this.$element.css({top: '0px', left: '0px', opacity: 0, zIndex: 0}).removeClass('active');
@@ -299,8 +301,9 @@
           this.$slide(num).addClass('active');
         break;
         default: //switch
-          this.$element.filter('.active').hide().removeClass('active');
-          this.$slide(num).addClass('active').show();
+          Sammy.log('switch', num, slide.$slide(num)[0]);
+          slide.$element.filter('.active').hide().removeClass('active');
+          slide.$slide(num).addClass('active').show();
         break;
       }
     },
@@ -463,9 +466,9 @@
         }
       },
       displaySlide: function(slide) {
-        var slide = new Slide('#display .slide');
-        slide.goTo(slide.position, slide.transition);
-        slide.setCSS();
+        var display_slide = new Slide('#display .slide');
+        display_slide.goTo(slide.position, slide.transition);
+        display_slide.setCSS();
         current_slide = slide.position;
       },
       setUpLinksForPreso: function(preso) {
@@ -613,7 +616,9 @@
     
     this.post('#/preso/:id/edit/:slide_id', function(e) {
       e.withCurrentPreso(function(preso) {
-        preso.slide(e.params.slide_id, e.params['slide']);
+        preso.slide(e.params.slide_id, $.extend({}, e.params['slide'], {
+          content_html: markdown(e.params['slide']['content'])
+        }));
         preso.save(function(p) {
           var next_id = parseInt(e.params.slide_id) + 1;
           e.redirect('#', 'preso', this.attributes._id, 'edit', next_id);
