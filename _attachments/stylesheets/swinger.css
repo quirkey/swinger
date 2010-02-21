@@ -160,6 +160,17 @@ iframe {
 .submit {
   float:right;
 }
+.slide-sort {
+  width: 180px;
+  height: 100%;
+  overflow: scroll;
+  float:left;
+}
+.slide-sort .slide {
+  margin: 10px;
+  -webkit-box-shadow: 0 0 15px #333;
+  -moz-box-shadow: 0 0 15px #333;
+}
 .slide-edit {
   width: 100%;
   color:#333;
