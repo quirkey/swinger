@@ -13,10 +13,9 @@
     return this
   };
   
-  var dbname = window.location.pathname.split('/')[1];
-  var db     = $.couch.db(dbname); 
-  
-  var default_slide_scale = {width: 1280, height: 650};
+  var dbname = window.location.pathname.split('/')[1] || 'swinger',
+      db     = $.couch.db(dbname),
+      default_slide_scale = {width: 1280, height: 650};
   
   var showdown = new Showdown.converter();
   
