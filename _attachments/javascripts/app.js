@@ -364,7 +364,8 @@
     },
     drawPreview: function(val) {
       // calculate dimensions
-      var width = ((windowDimensions().width / 2) - 40),
+      var width_offset = $('.slide-sort').is(':visible') ? 220 : 40;
+          width = ((windowDimensions().width / 2) - width_offset),
           height = Math.floor((width * 0.75)),
           dimensions= {width: width, height: height};
       this.setContent(markdown(val));  
@@ -604,6 +605,7 @@
           });
           var slide_preview = new Slide('.slide-preview .slide');
           var slide_sort = new Slide('.slide-sort .slide');
+          $('.slide-sort').trigger('resize');
           slide_sort.setCSS({width: 160, height: 160});
           $('.slide-form')
             // live preview of slide editing
@@ -777,7 +779,7 @@
       $('.slide-sort')
         .live('resize', function() {
           $(this).css('height', windowDimensions().height - $('#footer').outerHeight() - $(this).offset().top);
-        }).trigger('resize');
+        });
       
       $('#navigation')
         .find('.prev').live('click', function() {
@@ -791,7 +793,7 @@
         if ($('#display').length > 0) {
           new Slide('#display .slide').setCSS();
         } else {
-          $('textarea[name="content"]').triggerHandler('keyup');
+          $('textarea[name="slide[content]"]').trigger('keyup');
         }
         $('.slide-sort').trigger('resize');
       });
