@@ -315,34 +315,45 @@
     },
     setContentRatio: function(dimensions) {
       if (!dimensions) dimensions = windowDimensions();
-      var ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
+      var slide = this, 
+          ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
       Sammy.log('setContentRatio', dimensions, ratio);
       this.$element
         .find('.content').css({fontSize: ratio + "%"})
-        .find('img').each(function() {
-          var initial_width;
+        .find('img:visible').each(function() {
+          var initial_width, new_width;
           if ($(this).data('originalWidth')) {
             initial_width = $(this).data('originalWidth');
           } else {
             initial_width = $(this).width();
+            if (initial_width <= 0) {
+              setTimeout(function() {
+                slide.setContentRatio(dimensions);
+              }, 20);
+              return false;
+            }
             $(this).data('originalWidth', initial_width);
           }
-          Sammy.log('set img width', initial_width, 'ratio', ratio);
-          $(this).css('width', initial_width * (ratio / 100) + "px");
+          new_width = initial_width * (ratio / 100);
+          Sammy.log('set img width', initial_width, 'ratio', ratio, 'new_width', new_width);
+          if (new_width > 0) { $(this).css('width', new_width + "px"); }
         });
     },
     setCSS: function(dimensions) {
       if (!dimensions) dimensions = windowDimensions();
       $('#display').css(dimensions);
+      var slide = this;
       Sammy.log('setCSS', dimensions);
       this.$element.css(dimensions);
       $('#navigation').css({width: dimensions.width});
-      this.setContentRatio(dimensions);
-      this.setVerticalAlignment(dimensions);
-      this.highlightCode();
+      // setTimeout(function() {
+        slide.setContentRatio(dimensions);
+        slide.highlightCode();
+        slide.setVerticalAlignment(dimensions);
+      // }, 50);
     },
     setVerticalAlignment: function(dimensions) {
-      var $content = this.$element.find('.content'),
+      var $content       = this.$element.filter('.active').find('.content'),
           content_height = $content.height(),
           margin = Math.floor((dimensions.height - content_height) / 2);
       Sammy.log('height', dimensions.height, 'content_height', content_height, 'margin', margin);
