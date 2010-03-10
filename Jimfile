@@ -1,0 +1,15 @@
+// bundled_path: _attachments/javascripts/bundled.js
+// compressed_path: _attachments/javascripts/compressed.js
+// vendor_dir: _attachments/javascripts/vendor
+
+/ start adding your requirements below:
+
+json2
+jquery 1.4.2
+jquery.couch 0.11
+jquery.form 2.39
+jquery.easing
+showdown
+sammy 0.5.0
+sammy.template
+sammy.nested_params
