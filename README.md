@@ -1,17 +1,23 @@
 # Swinger
 
+# !NOTE!
+
+The codebase is currently in flux while I'm working out authentication stuff. Unfortunately, the CouchDB's new authentication features are slated for version 0.11 but only available in CouchDB trunk. Therefore, the current state of swinger only works on CouchDB trunk. If you're on OSX you can easily [grab the latest CouchDBX nightly](http://couch.lstoll.net/nightly/).
+
+# !ENDNOTE!
+
 Swinger is a couchapp for creating and showing Presentations. Think Keynote, stored in CouchDB, run via Javascript and Sammy.js.
 
-# About
+## About
 
 This was created as a Demo for my talk at jQuery Conf 2009 about Sammy.js, however, its usefulness might outlast my talk. We'll see.
 
-# Requirements
+## Requirements
 
 * A running CouchDB server
 * [CouchApp](http://github.com/couchapp/couchapp) - You need the latest and greatest couchapp for the push to work without errors. Follow [these instructions](http://wiki.github.com/couchapp/couchapp/manual-2) to install from source
 
-# Usage
+## Usage
 
 All you need to do to get up and running after the requirements are installed is:
 
