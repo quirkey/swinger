@@ -7,9 +7,9 @@
 json2
 jquery 1.4.2
 jquery.couch 0.11
-jquery.form 2.39
+jquery.form 2.40
 jquery.easing
 showdown
-sammy 0.5.0
-sammy.template
-sammy.nested_params
+sammy 0.5.1
+sammy.template 0.5.1
+sammy.nested_params 0.5.1
