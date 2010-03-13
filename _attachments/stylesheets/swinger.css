@@ -160,20 +160,39 @@ iframe {
 .submit {
   float:right;
 }
+.slide-edit {
+  width: 100%;
+  color:#333;
+}
+.slide-sort-view {
+  width: 200px;
+  height: 100%;
+  float:left;
+  border-right: 2px solid #999;
+}
+.slide-sort-view .header {
+  font-size: 14px;
+}
 .slide-sort {
   width: 180px;
   height: 100%;
   overflow: scroll;
-  float:left;
+  background: #666;
 }
 .slide-sort .slide {
   margin: 10px;
   -webkit-box-shadow: 0 0 15px #333;
   -moz-box-shadow: 0 0 15px #333;
 }
-.slide-edit {
-  width: 100%;
-  color:#333;
+.slide-sort .slide-placeholder {
+  width: auto;
+  background: #000;
+  height: 100px;
+  display:block;
+}
+.slide-edit-view {
+  width: auto;
+  float: left;
 }
 .slide-form h3, h3.section {
   font-size: 16px;

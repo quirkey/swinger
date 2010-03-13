@@ -605,16 +605,28 @@
           });
           var slide_preview = new Slide('.slide-preview .slide');
           var slide_sort = new Slide('.slide-sort .slide');
+          slide_sort.setCSS({width: 160, height: 160});
+          
           $('.slide-sort')
-            .trigger('resize')
+            // set up the sortable
             .sortable({
               items: '.slide',
               axis: 'y',
               stop: function(event, ui) {
                 e.trigger('slide-sort', {preso: preso, order: $(this).sortable('toArray')});
               }
+            })
+            // clicking a slide goes to that slide
+            .find('.slide').live('click', function() {
+              var slide_id = $(this).attr('id').replace('sort-slide-', '');
+              e.redirect('#','preso', preso.id(), 'edit', slide_id);
+            })
+            // jump to the right slide in the slide sort
+            .filter('#sort-slide-' + e.params.slide_id).each(function() {
+              var top = $(this).offset().top - 160;
+              $('.slide-sort').scrollTop(top)
             });
-          slide_sort.setCSS({width: 160, height: 160});
+          
           $('.slide-form')
             // live preview of slide editing
             .find('textarea[name="slide[content]"]')
@@ -632,6 +644,7 @@
               .bind('change', function() {
                 slide_preview.setTheme($(this).val());
               }).triggerHandler('change');
+          $(window).trigger('resize');
         });
       });
     });
@@ -818,6 +831,11 @@
           $(this).css('height', windowDimensions().height - $('#footer').outerHeight() - $(this).offset().top);
         });
       
+      $('.slide-edit-view')
+        .live('resize', function() {
+          $(this).css('width', windowDimensions().width - 202);
+        });
+      
       $('#navigation')
         .find('.prev').live('click', function() {
           context.app.trigger('display-prevslide', {id: $('#display').attr('rel')});
@@ -833,6 +851,7 @@
           $('textarea[name="slide[content]"]').trigger('keyup');
         }
         $('.slide-sort').trigger('resize');
+        $('.slide-edit-view').trigger('resize');
       });
         
     });
