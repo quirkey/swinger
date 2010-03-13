@@ -329,7 +329,7 @@
             if (initial_width <= 0) {
               setTimeout(function() {
                 slide.setContentRatio(dimensions);
-              }, 20);
+              }, 100);
               return false;
             }
             $(this).data('originalWidth', initial_width);
@@ -617,7 +617,7 @@
               }
             })
             // clicking a slide goes to that slide
-            .find('.slide').live('click', function() {
+            .find('.slide').click(function() {
               var slide_id = $(this).attr('id').replace('sort-slide-', '');
               e.redirect('#','preso', preso.id(), 'edit', slide_id);
             })
