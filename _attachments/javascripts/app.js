@@ -706,9 +706,33 @@
       });
     });
     
-    this.bind('slide-sort', function() {
-      var context = this;
-
+    this.bind('slide-sort', function(e, data) {
+      this.log('slide-sort');
+      var context = this,
+          prefix = "sort-slide-",
+          preso = data['preso'],
+          order = data['order'],
+          slides = preso.slides(),
+          new_slides = [];
+          
+      // edit the slide order and position
+      $.each(order, function(i, new_id) {
+        var slide = slides[parseInt(new_id.replace(prefix, '')) - 1];
+        slide.position = i + 1;
+        new_slides[i] = slide;
+      });
+      preso.attributes.slides = new_slides;
+      // save the preso
+      preso.save(function() {
+        // reapply the slide ids
+        $('.slide-sort')
+          .find('.slide')
+            .each(function(i, slide) {
+              $(this).attr('id', prefix + (i + 1))
+            })
+            .end()
+          .sortable('refresh');
+      });
     });
     
     this.bind('display-nextslide', function() {
