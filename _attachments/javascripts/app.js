@@ -378,8 +378,8 @@
     },
     drawPreview: function(val) {
       // calculate dimensions
-      var width_offset = $('.slide-sort').is(':visible') ? 220 : 40;
-          width = ((windowDimensions().width / 2) - width_offset),
+      var width_offset = $('.slide-sort').is(':visible') ? 260 : 40,
+          width = ((windowDimensions().width - width_offset) / 2),
           height = Math.floor((width * 0.75)),
           dimensions= {width: width, height: height};
       this.setContent(markdown(val));  
