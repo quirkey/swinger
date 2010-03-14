@@ -47,7 +47,7 @@ button, .button {
   -moz-appearance: none;
   background: none;
   -webkit-border-image: url(../images/button-bezel.png) 2 2 2 2 stretch stretch;
-  -moz-border-image: url(../images/button-bezel.png) 2 2 2 2 stretch stretch;
+  -moz-border-image: url(../images/button-bezel.png) 2 2 0 2 stretch stretch;
   padding: 3px 8px;
   color: #4F4F4F;
   font-weight: bold;

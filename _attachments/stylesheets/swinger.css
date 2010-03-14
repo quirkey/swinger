@@ -1,5 +1,5 @@
 body {
-  background: #999;
+  background: #E7E7E7;
 }
 #container {
   width: 100%;
@@ -19,12 +19,18 @@ body {
   position: fixed;
   bottom: 0px;
 }
+a:link, a:visited {
+  color: #4B89D0;
+}
+a:hover {
+  color: #305A89;
+}
 p.description {
   line-height: 200%;
   font-weight: normal;
 }
 p.description a:link, p.description a:visited {
-  color: #88D8F0;
+  color: #4B89D0;
   font-weight:bold;
 }
 p.description a:hover {
@@ -36,6 +42,7 @@ input[type="text"], input[type="password"], textarea {
   -moz-border-radius: 3px;
 }
 .header {
+  border-top: 1px solid #CCC;
   height:20px;
 }
 .nav .sep {
@@ -53,6 +60,7 @@ input[type="text"], input[type="password"], textarea {
 }
 .nav a {
   font-weight: bold;
+  color: #E7E7E7;
 }
 .user-nav {
   position: absolute;
@@ -71,7 +79,8 @@ input[type="text"], input[type="password"], textarea {
 .user-nav a:visited,
 #footer a:link, 
 #footer a:visited {
-  color:#999;
+  color:#E7E7E7;
+  text-decoration:none;
 }
 .user-nav a:hover,
 #footer a:hover {
@@ -115,6 +124,11 @@ iframe {
   text-align: center;
   z-index: 400;
 }
+.notification {
+  width: 100%;
+  text-align:center;
+  padding: 10px 0px;
+}
 
 #modal-loader {
   background: #000;
@@ -124,16 +138,18 @@ iframe {
   width: 300px;
 }
 
-#modal-notification.success {
+#modal-notification.success, 
+.notification.success {
   background: #486A78;
 }
 
-#modal-notification.error {
+#modal-notification.error,
+.notification.error {
   background: #992A20;
+  color: #FFF;
 }
 
 #create {
-  background: #AAA;
   padding: 20px;
 }
 #create input, #create button {
@@ -145,17 +161,31 @@ iframe {
 
 .preso {
   width: 300px;
-  height: 300px;
-  border: 1px solid #666;
-  -webkit-box-shadow: 0 0 15px #333;
-  -moz-box-shadow: 0 0 15px #333;
+  height: 360px;
   float:left;
   margin: 10px;
   cursor: pointer;
 }
+.preso .slide {
+  -webkit-box-shadow: 2px 2px 9px #666;
+  -moz-box-shadow: 2px 2px 9px #666;
+/*  border: 1px solid #666;*/
+}
 .preso.selected {
   -webkit-box-shadow: 0 0 15px #FFF;
   -moz-box-shadow: 0 0 15px #FFF;
+}
+.preso .preso-meta {
+  clear: both;
+  color: #999;
+}
+.preso .preso-meta h4 {
+  color: #000;
+  font-size: 16px;
+  padding: 10px 0px;
+}
+.preso .preso-meta h4 span a {
+  float: right;
 }
 .submit {
   float:right;

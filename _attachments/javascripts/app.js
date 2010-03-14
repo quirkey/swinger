@@ -72,7 +72,7 @@
     }
   };
   
-  function showNotification(status, message) {
+  function showModal(status, message) {
     var $notification = $('#modal-notification');
     $notification
       .attr('class', 'modal')
@@ -85,6 +85,20 @@
       .center()
       .fadeIn(400);
   };
+
+  function showNotification(status, message) {
+    var $notification = $('#inline-notification');
+    $notification
+      .attr('class', 'notification')
+      .addClass(status)   
+      .find('.message')
+        .html(message).end()
+      .find('button').one('click', function() {
+        $(this).parent().slideUp(200);
+      }).end()
+      .slideDown(400);
+  };
+  
   
   User = {
     _current_user: false,
@@ -320,7 +334,7 @@
       Sammy.log('setContentRatio', dimensions, ratio);
       this.$element
         .find('.content').css({fontSize: ratio + "%"})
-        .find('img:visible').each(function() {
+        .find('img').each(function() {
           var initial_width, new_width;
           if ($(this).data('originalWidth')) {
             initial_width = $(this).data('originalWidth');
@@ -443,6 +457,9 @@
             .find('.guest').show().end()
         }
       },
+      isLoggedInAs: function(username) {
+        return User.isLoggedIn() && User._current_user.name == username;
+      },
       showNav: function() { 
         $('.nav, .user-nav, #footer').show().find('.preso-link').hide();
       },
@@ -481,6 +498,8 @@
         display_slide.goTo(slide.position, slide.transition);
         display_slide.setCSS();
         current_slide = slide.position;
+        // set the jump input
+        $('.jump input[name="num"]').val(current_slide);
       },
       setUpLinksForPreso: function(preso) {
         var context = this;
@@ -500,12 +519,12 @@
     });
     
     this.before({only: /\#\/(create|new)/}, function() {
-       if (!User.isLoggedIn()) {
-         showNotification('error', 'Sorry, please login or signup to create a presentation.');
-         e.redirect('#/login');
-         return false;
-       }
-     });
+      if (!User.isLoggedIn()) {
+       showNotification('error', 'Sorry, please login or signup to create a presentation.');
+       this.redirect('#/login');
+       return false;
+      }
+    });
 
    this.before({except: /display/}, function() {
      this.showNav();
@@ -808,7 +827,7 @@
       
       $('.presos .preso')
         .live('click', function() {
-          context.redirect('#', 'preso', $(this).attr('rel'), 'edit', 1);
+          context.redirect('#', 'preso', $(this).attr('rel'), 'display', 1);
         });
       
       $('.linked-button')
