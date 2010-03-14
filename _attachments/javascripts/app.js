@@ -377,13 +377,20 @@
       sh_highlightDocument('javascripts/shjs/lang/', '.min.js');
     },
     drawPreview: function(val) {
-      // calculate dimensions
-      var width_offset = $('.slide-sort').is(':visible') ? 260 : 40,
-          width = ((windowDimensions().width - width_offset) / 2),
-          height = Math.floor((width * 0.75)),
-          dimensions= {width: width, height: height};
-      this.setContent(markdown(val));  
-      this.setCSS(dimensions);
+      // to prevent constant updates
+      var slide = this;
+      if (slide.redraw_timeout) {
+        clearTimeout(slide.redraw_timeout);
+      }
+      slide.redraw_timeout = setTimeout(function() {
+        // calculate dimensions
+        var width_offset = $('.slide-sort').is(':visible') ? 260 : 40,
+            width = ((windowDimensions().width - width_offset) / 2),
+            height = Math.floor((width * 0.75)),
+            dimensions= {width: width, height: height};
+        slide.setContent(markdown(val));  
+        slide.setCSS(dimensions);
+      }, 600);
     },
     $slide: function(num) {
       return this.$element.filter('#slide-' + num);
@@ -649,6 +656,7 @@
           $('.slide-form')
             // live preview of slide editing
             .find('textarea[name="slide[content]"]')
+              .tabby()
               .bind('keyup', function() {
                 slide_preview.drawPreview($(this).val());
               }).trigger('keyup').end()
