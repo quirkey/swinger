@@ -384,7 +384,7 @@
       }
       slide.redraw_timeout = setTimeout(function() {
         // calculate dimensions
-        var width_offset = $('.slide-sort').is(':visible') ? 260 : 40,
+        var width_offset = $('.slide-sort').is(':visible') ? 265 : 40,
             width = ((windowDimensions().width - width_offset) / 2),
             height = Math.floor((width * 0.75)),
             dimensions= {width: width, height: height};
@@ -643,10 +643,22 @@
               }
             })
             // clicking a slide goes to that slide
-            .find('.slide').click(function() {
-              var slide_id = $(this).attr('id').replace('sort-slide-', '');
-              e.redirect('#','preso', preso.id(), 'edit', slide_id);
-            })
+            .find('.slide')
+              .click(function() {
+                var slide_id = $(this).attr('id').replace('sort-slide-', '');
+                e.redirect('#','preso', preso.id(), 'edit', slide_id);
+              })
+              .hover(function() {
+                var $slide = $(this),
+                    slide_id = $slide.attr('id').replace('sort-slide-', ''),
+                    $slide_num = $slide.find('.slide-num');
+                if ($slide_num.length === 0) {
+                  $slide_num = $('<div/>', {'class': 'slide-num'}).hide().appendTo($slide);
+                } 
+                $slide_num.text(slide_id).show();
+              }, function() {
+                $(this).find('.slide-num').hide();
+              })
             // jump to the right slide in the slide sort
             .filter('#sort-slide-' + e.params.slide_id).each(function() {
               var top = $(this).offset().top - 160;

@@ -44,6 +44,7 @@ input[type="text"], input[type="password"], textarea {
 .header {
   border-top: 1px solid #CCC;
   height:20px;
+  padding: 6px;
 }
 .nav .sep {
   float:left;
@@ -211,9 +212,24 @@ iframe {
 }
 .slide-sort .slide {
   margin: 10px;
+  position:relative;
   -webkit-box-shadow: 0 0 15px #333;
   -moz-box-shadow: 0 0 15px #333;
 }
+.slide-sort .slide .slide-num {
+  position: absolute;
+  top: 75px;
+  right: -10px;
+  text-align: center;
+  min-width: 20px;
+  font-size: 12px;
+  color: #FFF;
+  background: #333;
+  padding: 4px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+}
+
 .slide-sort .slide-placeholder {
   width: auto;
   background: #000;
