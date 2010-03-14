@@ -40,7 +40,7 @@
 				if (18 == kc) {pressed.alt = true; 	setTimeout("$.fn.tabby.pressed.alt = false;",1000);}
 					
 				if (9 == kc && !pressed.ctrl && !pressed.alt) {
-					e.preventDefault; // does not work in O9.63 ??
+					e.preventDefault(); // does not work in O9.63 ??
 					pressed.last = kc;	setTimeout("$.fn.tabby.pressed.last = null;",0);
 					process_keypress ($(e.target).get(0), pressed.shft, options);
 					return false;

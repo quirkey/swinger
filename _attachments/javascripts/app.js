@@ -1,6 +1,7 @@
 ;(function($) {
   
   $.easing.def = 'easeInOutCubic';
+  $.fn.tabby.defaults.tabString = "  ";
   
   $.fn.center = function() {
     var dimensions = windowDimensions();
@@ -321,7 +322,7 @@
       }
     },
     setContent: function(content) {
-      Sammy.log('setContent', content, this.$element.find('.content'));
+      // Sammy.log('setContent', content, this.$element.find('.content'));
       this.$element.find('.content').html(content);
     },
     setTheme: function(theme) {
@@ -331,7 +332,7 @@
       if (!dimensions) dimensions = windowDimensions();
       var slide = this, 
           ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
-      Sammy.log('setContentRatio', dimensions, ratio);
+      // Sammy.log('setContentRatio', dimensions, ratio);
       this.$element
         .find('.content').css({fontSize: ratio + "%"})
         .find('img').each(function() {
@@ -349,7 +350,7 @@
             $(this).data('originalWidth', initial_width);
           }
           new_width = initial_width * (ratio / 100);
-          Sammy.log('set img width', initial_width, 'ratio', ratio, 'new_width', new_width);
+          // Sammy.log('set img width', initial_width, 'ratio', ratio, 'new_width', new_width);
           if (new_width > 0) { $(this).css('width', new_width + "px"); }
         });
     },
@@ -357,7 +358,7 @@
       if (!dimensions) dimensions = windowDimensions();
       $('#display').css(dimensions);
       var slide = this;
-      Sammy.log('setCSS', dimensions);
+      // Sammy.log('setCSS', dimensions);
       this.$element.css(dimensions);
       $('#navigation').css({width: dimensions.width});
       // setTimeout(function() {
@@ -370,7 +371,7 @@
       var $content       = this.$element.filter('.active').find('.content'),
           content_height = $content.height(),
           margin = Math.floor((dimensions.height - content_height) / 2);
-      Sammy.log('height', dimensions.height, 'content_height', content_height, 'margin', margin);
+      // Sammy.log('height', dimensions.height, 'content_height', content_height, 'margin', margin);
       if (margin > 0) { $content.css({marginTop: margin + "px"}); }
     },
     highlightCode: function() {
@@ -669,6 +670,14 @@
             // live preview of slide editing
             .find('textarea[name="slide[content]"]')
               .tabby()
+              .bind('keypress', function(ev) {
+                Sammy.log('keypress', ev);
+                if ((ev.which == $.ui.keyCode.ENTER) && ev.ctrlKey) {
+                  Sammy.log('keypress enter', ev);
+                  ev.preventDefault();
+                  $(this).parents('form').submit();
+                }
+              })
               .bind('keyup', function() {
                 slide_preview.drawPreview($(this).val());
               }).trigger('keyup').end()
@@ -683,7 +692,7 @@
               .bind('change', function() {
                 slide_preview.setTheme($(this).val());
               }).triggerHandler('change');
-          $(window).trigger('resize');
+          setTimeout(function() { $(window).trigger('resize'); }, 50);
         });
       });
     });

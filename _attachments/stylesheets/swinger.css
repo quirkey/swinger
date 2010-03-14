@@ -218,10 +218,10 @@ iframe {
 }
 .slide-sort .slide .slide-num {
   position: absolute;
-  top: 75px;
-  right: -10px;
+  bottom: 10px;
+  right: 10px;
   text-align: center;
-  min-width: 20px;
+  min-width: 15px;
   font-size: 12px;
   color: #FFF;
   background: #333;
@@ -262,9 +262,12 @@ iframe {
 }
 .slide-form textarea {
   width: 99%;
+  font-family: Inconsolata, Monaco, Monospace;
+  font-size: 14px;
 }
 .slide-form textarea.content-textarea {
   height: 300px;
+  font-size: 18px;
 }
 .slide-attachments {
   margin: 20px;
