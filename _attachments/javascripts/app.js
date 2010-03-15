@@ -443,7 +443,8 @@
         'basic',
         'nakajima',
         'quirkey',
-        'nakajima-black'
+        'nakajima-black',
+        'sammy'
       ],
       transitions: [
         'switch',
@@ -621,6 +622,24 @@
       });
     });
     
+    this.get('#/preso/:id/edit', function(e) {
+      showLoader();
+      e.withCurrentPreso(function(preso) {
+        e.preso = preso;
+        e.partial('templates/new.html.erb', function(html) {
+          e.app.swap(html);
+          new Slide('.slide').setCSS({width: 150, height: 150});
+          $('.preso').click(function() {
+            Sammy.log('click preso', this);
+            var theme = $(this).attr('data-theme');
+            $('input[name="preso[theme]"][value="'+ theme + '"]').attr('checked', 'checked');
+            $(this).addClass('selected');
+            $(this).siblings('.preso').removeClass('selected');
+          });
+        });
+      });
+    });
+        
     this.get('#/preso/:id/edit/:slide_id', function(e) {
       showLoader();
       e.withCurrentPreso(function(preso) {
@@ -670,17 +689,16 @@
             // live preview of slide editing
             .find('textarea[name="slide[content]"]')
               .tabby()
-              .bind('keypress', function(ev) {
+              .bind('keyup', function(ev) {
                 Sammy.log('keypress', ev);
                 if ((ev.which == $.ui.keyCode.ENTER) && ev.ctrlKey) {
                   Sammy.log('keypress enter', ev);
                   ev.preventDefault();
                   $(this).parents('form').submit();
+                } else {
+                  slide_preview.drawPreview($(this).val());
                 }
-              })
-              .bind('keyup', function() {
-                slide_preview.drawPreview($(this).val());
-              }).trigger('keyup').end()
+              }).trigger('keyup').focus().end()
             .find('textarea[name="slide[additional_css]"]')
               .bind('keyup', function() {
                 var area = this;
@@ -869,9 +887,9 @@
         .live('click', function(e) {
           var attachment_url = $(this).attr('rel');
           var attachment_name = $(this).text();
-          $('textarea[name="content"]')
-             .val($('textarea[name="content"]').val() + "\n![" + attachment_name + "](" + attachment_url + ")")
-            .triggerHandler('keyup');
+          $('textarea[name="slide[content]"]').val(function(i, val) {
+             return val + "\n![" + attachment_name + "](" + attachment_url + ")";
+          }).triggerHandler('keyup');
         });
         
       $('.slide-sort')

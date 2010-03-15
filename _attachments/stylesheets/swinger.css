@@ -208,8 +208,8 @@ iframe {
   width: 180px;
   height: 100%;
   overflow-x: hidden;
-  overflow-y: scroll;
-  background: #666;
+  overflow-y: auto;
+  background: #AAA;
 }
 .slide-sort .slide {
   margin: 10px;
