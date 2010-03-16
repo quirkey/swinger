@@ -5,6 +5,7 @@
 / start adding your requirements below:
 
 json2
+sha1
 jquery 1.4.2
 jquery.couch 0.11
 jquery.form 2.40
