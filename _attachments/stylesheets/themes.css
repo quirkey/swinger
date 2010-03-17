@@ -1,3 +1,16 @@
+@font-face {
+  font-family: 'HelsinkiRegular';
+  src: url('fonts/helsinki/helsinki.eot');
+  src: local('Helsinki'), local('Helsinki'), url('fonts/helsinki/helsinki.woff') format('woff'), url('fonts/helsinki/helsinki.ttf') format('truetype'), url('fonts/helsinki/helsinki.svg#Helsinki') format('svg');
+}
+
+@font-face {
+	font-family: 'BebasRegular';
+	src: url('fonts/bebas/BEBAS___.eot');
+	src: local('Bebas'), local('Bebas'), url('fonts/bebas/BEBAS___.woff') format('woff'), url('fonts/bebas/BEBAS___.ttf') format('truetype'), url('fonts/bebas/BEBAS___.svg#Bebas') format('svg');
+}
+
+
 .slide {
   font-size: 42px;
 }
@@ -149,3 +162,23 @@
  *  sammy                 *
 \*****************************************************/
 
+.sammy {
+  font: 32px/36px 'BebasRegular', Helvetica, Arial, sans-serif;
+  color: #111;
+  background: #fff;
+  word-spacing: 0.25em;
+}
+.slide.sammy .content code {
+  font-family: Inconsolata, Courier, monospace;
+}
+.slide.sammy .content strong {
+  color: #5E9FBF;
+  font-weight: bold;
+}
+.slide.sammy .content em {
+  font-weight: bold;
+  font-style: normal;
+  color:#E45467;
+}
+
+.sammy pre.sh_sourceCode{background-color:#fff;color:#000;font-weight:normal;font-style:normal;}.sammy pre.sh_sourceCode .sh_keyword{color:#00f;font-weight:bold;font-style:normal;}.sammy pre.sh_sourceCode .sh_type{color:#00f;font-weight:normal;font-style:normal;}.sammy pre.sh_sourceCode .sh_string{color:#f00;font-weight:normal;font-style:normal;}.sammy pre.sh_sourceCode .sh_regexp{color:#f00;font-weight:normal;font-style:normal;}.sammy pre.sh_sourceCode .sh_specialchar{color:#C42DA8;font-weight:normal;font-style:normal;}.sammy pre.sh_sourceCode .sh_comment{color:#666;font-weight:normal;font-style:italic;}.sammy pre.sh_sourceCode .sh_number{color:#a900a9;font-weight:normal;font-style:normal;}.sammy pre.sh_sourceCode .sh_preproc{color:#00b800;font-weight:normal;font-style:normal;}.sammy pre.sh_sourceCode .sh_symbol{color:#f00;font-weight:normal;font-style:normal;}.sammy pre.sh_sourceCode .sh_function{color:#000;font-weight:bold;font-style:normal;}.sammy pre.sh_sourceCode .sh_cbracket{color:#f00;font-weight:normal;font-style:normal;}.sammy pre.sh_sourceCode .sh_url{color:#f00;font-weight:normal;font-style:normal;}.sammy pre.sh_sourceCode .sh_date{color:#00f;font-weight:bold;font-style:normal;}.sammy pre.sh_sourceCode .sh_time{color:#00f;font-weight:bold;font-style:normal;}.sammy pre.sh_sourceCode .sh_file{color:#00f;font-weight:bold;font-style:normal;}.sammy pre.sh_sourceCode .sh_ip{color:#f00;font-weight:normal;font-style:normal;}.sammy pre.sh_sourceCode .sh_name{color:#f00;font-weight:normal;font-style:normal;}.sammy pre.sh_sourceCode .sh_variable{color:#ec7f15;font-weight:normal;font-style:normal;}.sammy pre.sh_sourceCode .sh_oldfile{color:#C42DA8;font-weight:normal;font-style:normal;}.sammy pre.sh_sourceCode .sh_newfile{color:#f00;font-weight:normal;font-style:normal;}.sammy pre.sh_sourceCode .sh_difflines{color:#00f;font-weight:bold;font-style:normal;}.sammy pre.sh_sourceCode .sh_selector{color:#ec7f15;font-weight:normal;font-style:normal;}.sammy pre.sh_sourceCode .sh_property{color:#00f;font-weight:bold;font-style:normal;}.sammy pre.sh_sourceCode .sh_value{color:#f00;font-weight:normal;font-style:normal;}

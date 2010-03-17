@@ -328,8 +328,9 @@
     setTheme: function(theme) {
       this.$element.attr('class', 'slide active').addClass(theme);
     },
-    setContentRatio: function(dimensions) {
+    setContentRatio: function(dimensions, attempts) {
       if (!dimensions) dimensions = windowDimensions();
+      if (!attempts) attempts = 1;
       var slide = this, 
           ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
       // Sammy.log('setContentRatio', dimensions, ratio);
@@ -341,10 +342,10 @@
             initial_width = $(this).data('originalWidth');
           } else {
             initial_width = $(this).width();
-            if (initial_width <= 0) {
+            if (initial_width <= 0 && attempts < 3) {
               setTimeout(function() {
-                slide.setContentRatio(dimensions);
-              }, 100);
+                slide.setContentRatio(dimensions, attempts + 1);
+              }, 100 * attempts);
               return false;
             }
             $(this).data('originalWidth', initial_width);
@@ -681,8 +682,12 @@
               })
             // jump to the right slide in the slide sort
             .filter('#sort-slide-' + e.params.slide_id).each(function() {
-              var top = $(this).offset().top - 160;
-              $('.slide-sort').scrollTop(top)
+              var $slide = $(this);
+              setTimeout(function() { 
+                var top = $slide.offset().top - 160;
+                Sammy.log('top', top);
+                $('.slide-sort').scrollTop(top)
+              }, 50);
             });
           
           $('.slide-form')
