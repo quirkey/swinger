@@ -41,7 +41,7 @@
           in_code_block = false;
           new_text.push("</code></pre>");
         } else {
-          new_text.push(prev + line);
+          new_text.push(prev + line.replace(/</g,"&lt;").replace(/>/g,"&gt;"));
           prev = '';
         }
       }

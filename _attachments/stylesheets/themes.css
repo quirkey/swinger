@@ -166,7 +166,7 @@
   font: 32px/36px 'BebasRegular', Helvetica, Arial, sans-serif;
   color: #333;
   background: #CACBD3;
-  background: -webkit-gradient(linear, left top, left bottom, from(#ECECEC), to(#CACBD3));
+  background: -webkit-gradient(linear, left top, left bottom, from(#F2F2F2), to(#CACBD3));
   word-spacing: 0.25em;
 }
 .slide.sammy .content code {
