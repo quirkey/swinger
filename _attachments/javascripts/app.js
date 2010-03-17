@@ -21,17 +21,18 @@
   var showdown = new Showdown.converter();
   
   var end_block_re = /^\s*@@@\s*$/;
-  var start_block_re = /@@@\s([\w\d]+)/;
+  var start_block_re = /@@@\s([\w\d]+)\s*/;
   
   function markdown(text) {
     // includes special code block handling
-    var new_text = [];
-    var in_code_block = false;
+    var new_text = [],
+        prev = '',
+        in_code_block = false;
     $.each(text.split(/[\n\r]/), function(i, line) {
       if (!in_code_block) {
         if (line.match(start_block_re)) {
           in_code_block = true;
-          new_text.push(line.replace(start_block_re, "<pre class=\"sh_$1\"><code>"));
+          prev = line.replace(start_block_re, "<pre class=\"sh_$1\"><code>");
         } else {
           new_text.push(line);
         }
@@ -40,7 +41,8 @@
           in_code_block = false;
           new_text.push("</code></pre>");
         } else {
-          new_text.push("" + line);
+          new_text.push(prev + line);
+          prev = '';
         }
       }
     });
