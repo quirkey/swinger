@@ -4,6 +4,7 @@
     <form action="#/create" method="post">
       <p><label for="name">Title:</label><input type="text" name="preso[name]" /></p>
       <p><label for="_id">Short ID (optional):</label><input type="text" name="preso[_id]" /></p>
+      <p><label for="preso_share">Share on homepage?</label><input id="preso_share" type="checkbox" name="preso[share]" checked="checked" /></p>
       <p><label>Choose a theme:</label></p>
       <div class="themes">
         <% $.each(themes, function(i, v) { %>

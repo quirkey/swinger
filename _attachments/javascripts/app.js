@@ -167,7 +167,8 @@
     var default_doc = {
       name: "",
       slides: [],
-      type: "presentation"
+      type: "presentation",
+      share: false
     };
     this.database   = db;
     this.attributes = $.extend({}, default_doc, doc);
