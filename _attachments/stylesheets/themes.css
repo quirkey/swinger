@@ -181,6 +181,9 @@
   font-style: normal;
   color:#DC5164;
 }
+.slide.sammy .content h1 {
+  text-shadow: 1px #CCC;
+}
 .slide.sammy .content blockquote {
   font: 48px/52px 'HelsinkiRegular', Helvetica, Arial, sans-serif;
   color:#DC5164;
