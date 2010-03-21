@@ -365,11 +365,9 @@
       // Sammy.log('setCSS', dimensions);
       this.$element.css(dimensions);
       $('#navigation').css({width: dimensions.width});
-      // setTimeout(function() {
-        slide.setContentRatio(dimensions);
-        slide.highlightCode();
-        slide.setVerticalAlignment(dimensions);
-      // }, 50);
+      slide.setContentRatio(dimensions);
+      slide.highlightCode();
+      slide.setVerticalAlignment(dimensions);
     },
     setVerticalAlignment: function(dimensions) {
       var $content       = this.$element.filter('.active').find('.content'),
@@ -395,7 +393,7 @@
             dimensions= {width: width, height: height};
         slide.setContent(markdown(val));  
         slide.setCSS(dimensions);
-      }, 600);
+      }, 200);
     },
     $slide: function(num) {
       return this.$element.filter('#slide-' + num);
@@ -716,7 +714,7 @@
               .bind('change', function() {
                 slide_preview.setTheme($(this).val());
               }).triggerHandler('change');
-          setTimeout(function() { $(window).trigger('resize'); }, 50);
+          $(window).trigger('resize');
         });
       });
     });

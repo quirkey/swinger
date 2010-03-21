@@ -197,6 +197,7 @@ iframe {
 }
 .slide-sort-view {
   width: 200px;
+  position: absolute;
   height: 100%;
   float:left;
   border-right: 2px solid #999;
@@ -238,7 +239,8 @@ iframe {
   display:block;
 }
 .slide-edit-view {
-  width: auto;
+  width: 100%;
+  margin-left: 202px;
   float: left;
 }
 .slide-form h3, h3.section {
