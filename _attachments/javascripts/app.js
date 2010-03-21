@@ -690,7 +690,7 @@
                 var top = $slide.offset().top - 160;
                 Sammy.log('top', top);
                 $('.slide-sort').scrollTop(top)
-              }, 50);
+              }, 100);
             });
           
           $('.slide-form')
@@ -698,9 +698,7 @@
             .find('textarea[name="slide[content]"]')
               .tabby()
               .bind('keyup', function(ev) {
-                Sammy.log('keypress', ev);
                 if ((ev.which == $.ui.keyCode.ENTER) && ev.ctrlKey) {
-                  Sammy.log('keypress enter', ev);
                   ev.preventDefault();
                   $(this).parents('form').submit();
                 } else {
