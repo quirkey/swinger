@@ -32,7 +32,7 @@
       if (!in_code_block) {
         if (line.match(start_block_re)) {
           in_code_block = true;
-          prev = line.replace(start_block_re, "<pre class=\"sh_$1\"><code>");
+          prev = line.replace(start_block_re, "<pre class=\"prettyprint lang-$1\"><code>");
         } else {
           new_text.push(line);
         }
@@ -379,7 +379,7 @@
       if (margin > 0) { $content.css({marginTop: margin + "px"}); }
     },
     highlightCode: function() {
-      sh_highlightDocument('javascripts/shjs/lang/', '.min.js');
+      prettyPrint();
     },
     drawPreview: function(val) {
       // to prevent constant updates
