@@ -398,16 +398,15 @@
     $slide: function(num) {
       return this.$element.filter('#slide-' + num);
     }
-  });;
-      
+  });
+   
   var app = $.sammy(function() {
     this.use(Sammy.Template);
     this.use(Sammy.NestedParams);
     
     this.debug = true;
     this.element_selector = '#container';
-    this.template_engine = 'template';
-    
+    this.template_engine = 'template';   
     
     var current_preso = false;
     var current_slide = 1;

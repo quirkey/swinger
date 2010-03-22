@@ -18,5 +18,7 @@ jquery.tabby
 prettify
 showdown
 sammy 0.5.1
+sammy.storage 0.5.1
 sammy.template 0.5.1
 sammy.nested_params 0.5.1
+sammy.form
