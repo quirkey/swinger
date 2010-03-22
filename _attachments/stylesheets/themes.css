@@ -301,7 +301,7 @@ pre.sh_sourceCode .sh_value{color:#f00;font-weight:normal;font-style:normal;}
 \*****************************************************/
 
 .sammy {
-  font: 32px/36px 'BebasRegular', Helvetica, Arial, sans-serif;
+  font: 2.4em/2.4em 'BebasRegular', Helvetica, Arial, sans-serif;
   color: #333;
   background: #CACBD3;
   background: -webkit-gradient(linear, left top, left bottom, from(#F2F2F2), to(#CACBD3));
@@ -323,7 +323,7 @@ pre.sh_sourceCode .sh_value{color:#f00;font-weight:normal;font-style:normal;}
   text-shadow: 1px #CCC;
 }
 .slide.sammy .content blockquote {
-  font: 48px/52px 'HelsinkiRegular', Helvetica, Arial, sans-serif;
+  font: 2.4em/2.4em 'HelsinkiRegular', Helvetica, Arial, sans-serif;
   color:#DC5164;
 }
 .slide.sammy .content ul li {
