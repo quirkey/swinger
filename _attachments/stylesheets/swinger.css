@@ -63,6 +63,12 @@ input[type="text"], input[type="password"], textarea {
   font-weight: bold;
   color: #E7E7E7;
 }
+.nav .title {
+  float: left;
+  padding: 9px 8px 0px 8px;
+  color: #A9CCFA;
+  text-shadow: 0px 1px 1px #000;
+}
 .user-nav {
   position: absolute;
   font-size: 12px;

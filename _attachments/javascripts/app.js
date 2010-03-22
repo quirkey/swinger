@@ -487,7 +487,7 @@
         return User.isLoggedIn() && User._current_user.name == username;
       },
       showNav: function() { 
-        $('.nav, .user-nav, #footer').show().find('.preso-link').hide();
+        $('.nav, .user-nav, #footer').show().find('.preso-links').hide();
       },
       hideNav: function() {
         $('.nav, .user-nav, #footer').hide();
@@ -529,10 +529,12 @@
       },
       setUpLinksForPreso: function(preso) {
         var context = this;
-        $('.nav a.preso-link').show().each(function() {
+        $('.preso-name').text(preso.attributes.name);
+        $('.nav a.preso-link').each(function() {
           var meth = $(this).attr('rel');
           $(this).attr('href', context.join('/','#', 'preso', preso.id(), meth));
         });
+        $('.preso-links').show();
       }
     });
     
