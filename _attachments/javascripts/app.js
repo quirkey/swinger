@@ -100,6 +100,9 @@
         $(this).parent().slideUp(200);
       }).end()
       .slideDown(400);
+    setTimeout(function() {
+      $notification.slideUp();
+    }, 6000)
   };
   
   
@@ -168,7 +171,7 @@
       name: "",
       slides: [],
       type: "presentation",
-      share: false
+      share: true
     };
     this.database   = db;
     this.attributes = $.extend({}, default_doc, doc);
@@ -193,6 +196,10 @@
       success: function(resp) {
         var p = new Preso(resp);
         success.apply(p, [p]);
+      },
+      error: function(status, error, reason) {
+        showNotification('error', "Sorry, the presentation you were looking for can't be found.");
+        window.location.hash = '#/'
       }
     }));
   };
@@ -246,6 +253,14 @@
         success: function(resp) {
           Sammy.log('preso.save', self, resp);
           $.extend(self.attributes, resp);
+          if (callback) { callback.apply(self, [resp]); }
+        }
+      }));
+    },
+    destroy: function(callback) {
+      var self = this;
+      this.database.removeDoc(this.attributes, Preso.mergeCallbacks({
+        success: function(resp) {
           if (callback) { callback.apply(self, [resp]); }
         }
       }));
@@ -403,6 +418,7 @@
   var app = $.sammy(function() {
     this.use(Sammy.Template);
     this.use(Sammy.NestedParams);
+    this.use(Sammy.Form);
     
     this.debug = true;
     this.element_selector = '#container';
@@ -569,7 +585,7 @@
     
     this.post('#/login', function(e) {
       User.login(this.params['name'], this.params['password'], function(user) {
-        showNotification('success', 'Thanks for logging in ' + user.name);
+        showNotification('success', 'Thanks for logging in, ' + user.name + '!');
         e.redirect('#/');
       })
     });    
@@ -603,22 +619,16 @@
     });
     
     this.get('#/new', function(e) {
-      this.partial('templates/new.html.erb', function(html) {
+      this.partial('templates/form.html.erb', {preso: new Preso(), form_action: '#/create'}, function(html) {
         this.app.swap(html);
         new Slide('.slide').setCSS({width: 150, height: 150});
-        $('.preso').click(function() {
-          Sammy.log('click preso', this);
-          var theme = $(this).attr('data-theme');
-          $('input[name="preso[theme]"][value="'+ theme + '"]').attr('checked', 'checked');
-          $(this).addClass('selected');
-          $(this).siblings('.preso').removeClass('selected');
-        })
       });
     });
     
     this.post('#/create', function(e) {
       var preso = new Preso($.extend({}, e.params['preso'], {user: User._current_user.name}));
       preso.save(function() {
+        showNotification('success', 'Your presentation has been created');
         e.redirect('#', 'preso', this.attributes._id, 'edit', '1');
       });
     });
@@ -627,19 +637,37 @@
       showLoader();
       e.withCurrentPreso(function(preso) {
         e.preso = preso;
-        e.partial('templates/new.html.erb', function(html) {
+        e.partial('templates/form.html.erb', {form_action: '#/preso/' + preso.id() +'/edit'}, function(html) {
           e.app.swap(html);
           new Slide('.slide').setCSS({width: 150, height: 150});
-          $('.preso').click(function() {
-            Sammy.log('click preso', this);
-            var theme = $(this).attr('data-theme');
-            $('input[name="preso[theme]"][value="'+ theme + '"]').attr('checked', 'checked');
-            $(this).addClass('selected');
-            $(this).siblings('.preso').removeClass('selected');
-          });
         });
       });
     });
+    
+    this.post('#/preso/:id/edit', function(e) {
+      showLoader();
+      e.withCurrentPreso(function(preso) {
+        $.extend(preso.attributes, e.params['preso']);
+        preso.save(function() {
+          showNotification('success', 'Your presentation has been updated');
+          e.redirect('#', 'preso', this.attributes._id, 'edit', '1');
+        });
+      });
+    });
+    
+    this.get('#/preso/:id/delete', function(e) {
+      e.withCurrentPreso(function(preso) {
+        if (confirm('Are you sure you want to delete this presentation? There is no undo.')) {
+          preso.destroy(function() {
+            showNotification('success', 'Your presentation has been deleted.');
+            e.redirect('#/');
+          })
+        } else {
+          alert('OK. No action taken.');
+          e.redirect('#', 'preso', preso.id(), 'edit');
+        }
+      });
+    })
         
     this.get('#/preso/:id/edit/:slide_id', function(e) {
       showLoader();
@@ -893,6 +921,16 @@
           $('textarea[name="slide[content]"]').val(function(i, val) {
              return val + "\n![" + attachment_name + "](" + attachment_url + ")";
           }).triggerHandler('keyup');
+        });
+      
+      // preso theme selection
+      $('.themes .preso')
+        .live('click', function() {
+          Sammy.log('click preso', this);
+          var theme = $(this).attr('data-theme');
+          $('input[name="preso[theme]"][value="'+ theme + '"]').attr('checked', 'checked');
+          $(this).addClass('selected');
+          $(this).siblings('.preso').removeClass('selected');
         });
         
       $('.slide-sort')

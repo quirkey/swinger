@@ -13984,6 +13984,7 @@ return "~E"+_b6+"E";
   var srender = function(name, template, data) {
     // target is an optional element; if provided, the result will be inserted into it
     // otherwise the result will simply be returned to the caller   
+    var fn;
     if (srender_cache[name]) {
       fn = srender_cache[name];
     } else {
@@ -13993,6 +13994,7 @@ return "~E"+_b6+"E";
       }
       // Generate a reusable function that will serve as a template
       // generator (and which will be cached).
+      try {
       fn = srender_cache[name] = new Function("obj",
       "var p=[],print=function(){p.push.apply(p,arguments);};" +
 
@@ -14000,16 +14002,20 @@ return "~E"+_b6+"E";
       "with(obj){p.push(\"" +
 
       // Convert the template into pure JavaScript
-      template
-        .replace(/[\r\t\n]/g, " ")
-        .replace(/\"/g, '\\"')
-        .split("<%").join("\t")
-        .replace(/((^|%>)[^\t]*)/g, "$1\r")
-        .replace(/\t=(.*?)%>/g, "\",$1,\"")
-        .split("\t").join("\");")
-        .split("%>").join("p.push(\"")
-        .split("\r").join("")
+
+        template
+          .replace(/[\r\t\n]/g, " ")
+          .replace(/\"/g, '\\"')
+          .split("<%").join("\t")
+          .replace(/((^|%>)[^\t]*)/g, "$1\r")
+          .replace(/\t=(.*?)%>/g, "\",$1,\"")
+          .split("\t").join("\");")
+          .split("%>").join("p.push(\"")
+          .split("\r").join("")
         + "\");}return p.join('');");
+      } catch(e) {
+        console.error(e);
+      }
     }
 
     if (typeof data != 'undefined') {
@@ -14227,9 +14233,9 @@ return "~E"+_b6+"E";
     html += tag;
     if (typeof attributes != 'undefined') {
       $.each(attributes, function(key, value) {
-        html += " " + key + "='";
+        html += " " + key + "=\"";
         html += getStringContent(attributes, value);
-        html += "'";
+        html += "\"";
       });
     }
     if (content === false) {

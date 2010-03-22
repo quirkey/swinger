@@ -129,6 +129,8 @@ iframe {
   width: 100%;
   text-align:center;
   padding: 10px 0px;
+  font-size: 16px;
+  text-shadow: 0px 1px 1px #333;
 }
 
 #modal-loader {
@@ -138,10 +140,14 @@ iframe {
 #modal-notification {
   width: 300px;
 }
-
+#inline-notification {
+  position: relative;
+  border-bottom: 1px solid #FFF;
+}
 #modal-notification.success, 
 .notification.success {
-  background: #486A78;
+  background: #118F3A;
+  color: #FFF;
 }
 
 #modal-notification.error,
@@ -149,7 +155,11 @@ iframe {
   background: #992A20;
   color: #FFF;
 }
-
+#inline-notification button {
+  position: absolute;
+  top: 2px;
+  right: 25px;
+}
 #create {
   padding: 20px;
 }
@@ -173,8 +183,9 @@ iframe {
 /*  border: 1px solid #666;*/
 }
 .preso.selected {
-  -webkit-box-shadow: 0 0 15px #FFF;
-  -moz-box-shadow: 0 0 15px #FFF;
+  -webkit-box-shadow: 15px 15px 25px #333;
+  -moz-box-shadow: 15px 15px 25px #333;
+  border: 1px solid #333;
 }
 .preso .preso-meta {
   clear: both;

@@ -16,9 +16,9 @@
     html += tag;
     if (typeof attributes != 'undefined') {
       $.each(attributes, function(key, value) {
-        html += " " + key + "='";
+        html += " " + key + "=\"";
         html += getStringContent(attributes, value);
-        html += "'";
+        html += "\"";
       });
     }
     if (content === false) {
