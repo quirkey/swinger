@@ -419,6 +419,9 @@
     this.use(Sammy.Template);
     this.use(Sammy.NestedParams);
     this.use(Sammy.Form);
+    this.use(Sammy.Title);
+    
+    this.setTitle('// Swinger //');
     
     this.debug = true;
     this.element_selector = '#container';
@@ -559,6 +562,7 @@
    });
     
     this.get('#/', function(e) {
+      this.title('Welcome');
       showLoader();
       this.partial('templates/index.html.erb', function(t) {
         this.app.swap(t);
@@ -582,6 +586,7 @@
     });
     
     this.get('#/login', function(e) {
+      this.title('Login')
       e.partial('templates/login.html.erb');
     });
     
@@ -621,6 +626,7 @@
     });
     
     this.get('#/new', function(e) {
+      this.title('New Presentation')
       this.partial('templates/form.html.erb', {preso: new Preso(), form_action: '#/create'}, function(html) {
         this.app.swap(html);
         new Slide('.slide').setCSS({width: 150, height: 150});
@@ -638,6 +644,7 @@
     this.get('#/preso/:id/edit', function(e) {
       showLoader();
       e.withCurrentPreso(function(preso) {
+        this.title('Editing Presentation', preso.attributes.name);
         e.preso = preso;
         e.partial('templates/form.html.erb', {form_action: '#/preso/' + preso.id() +'/edit'}, function(html) {
           e.app.swap(html);
@@ -675,6 +682,7 @@
       showLoader();
       e.withCurrentPreso(function(preso) {
         e.preso = preso;
+        e.title('Editing Presentation', preso.attributes.name);
         e.partial('templates/edit.html.erb', {slide: e.preso.slide(e.params.slide_id)}, function(t) {
           e.app.swap(t);
           e.partial('templates/_upload_form.html.erb', function(data) {
@@ -767,6 +775,7 @@
     this.get('#/preso/:id/display/:slide_id', function(e) {
       this.hideNav();
       e.withCurrentPreso(function(preso) {
+        e.title(preso.attributes.name, "(" + e.params.slide_id + " of " + preso.slides().length + ")");
         e.preso = preso;
         // check if display has already been rendered
         if ($('#display[rel="'+ preso.id() + '"]').length > 0) {
