@@ -16,6 +16,7 @@
 }
 .slide .content {
   font-size: 100%;
+  line-height: 100%;
   padding: 0 10%;  
 }
 .slide .content h1,
@@ -54,19 +55,24 @@
   padding: 0% 1%;
   line-height: 150%;
 }
-.slide blockquote {
+.slide .content blockquote {
   padding: 0 0 0 2%;
+  font-size: 100%;
   line-height: 150%;
   font-style: italic;
 }
-.slide ul, .slide ol, .slide pre {
+.slide .content ul, 
+.slide .content ol, 
+.slide .content pre {
   text-align: left;
+  line-height: 125%;
   padding: 2% 4%;
 }
-.slide li {
+.slide .content li {
   list-style-type: disc;
   list-style-position: outside;
-  font-size: 110%;
+/*  font-size: 110%;*/
+  line-height: 100%;
   padding: 2% 1%;
 }
 
