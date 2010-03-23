@@ -175,7 +175,9 @@ iframe {
 #create .simple-form {
   width: 100%
 }
-
+.presos {
+  margin-bottom: 25px;
+}
 .preso {
   width: 300px;
   height: 360px;
@@ -326,9 +328,7 @@ iframe {
   background: #F1F1F1;
 }
 .simple-form {
-  width: 50%;
   min-width: 400px;
-  float:left;
 }
 .simple-form h3 {
   text-align:left;
@@ -343,6 +343,10 @@ iframe {
   width: 150px;
   padding: 8px 0px 0px;
   float: left;
+}
+.simple-form input[type=text],
+.simple-form input[type=password] {
+  width: 250px;
 }
 .simple-form .submit {
   float:none;

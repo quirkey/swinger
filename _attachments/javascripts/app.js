@@ -569,7 +569,7 @@
         if (User.isLoggedIn()) {
           Preso.byUser(User._current_user.name, function(presos) {
             e.partial('templates/_presos.html.erb', {presos: presos}, function(p) {
-              $('#presos').html(p);
+              $('#presos').html(p).append('<div class="clear">');;
               new Slide('#presos .slide').setCSS({width: 300, height: 300});
             });
           })
@@ -578,7 +578,7 @@
         }
         Preso.all(function(presos) {
           e.partial('templates/_presos.html.erb', {presos: presos}, function(p) {
-            $('#all-presos').html(p);
+            $('#all-presos').html(p).append('<div class="clear">');
             new Slide('#all-presos .slide').setCSS({width: 300, height: 300});
           });
         });
