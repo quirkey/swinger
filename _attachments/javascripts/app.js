@@ -549,9 +549,10 @@
       });
     });
     
-    this.before({only: /\#\/(create|new|preso\/([^\/]+)\/edit)/}, function() {
+    this.before({only: /\#\/(create|new|preso\/([^\/]+)\/edit)$/}, function() {
       if (!User.isLoggedIn()) {
        showNotification('error', 'Sorry, please login or signup to create a presentation.');
+       this.app.last_location_before_redirect = this.path;
        this.redirect('#/login');
        return false;
       }
@@ -593,7 +594,8 @@
     this.post('#/login', function(e) {
       User.login(this.params['name'], this.params['password'], function(user) {
         showNotification('success', 'Thanks for logging in, ' + user.name + '!');
-        e.redirect('#/');
+        e.redirect(e.app.last_location_before_redirect || '#/');
+        e.app.last_location_before_redirect = null;
       })
     });    
     
@@ -616,7 +618,8 @@
         // create
         User.signup(this.params['name'], this.params['email'], this.params['password'], function() {
           showNotification('success', 'Thanks for signing up! You can start making presentations now.');
-          e.redirect('#/');
+          e.redirect(e.app.last_location_before_redirect || '#/');
+          e.app.last_location_before_redirect = null;
         });
       } else {
         showNotification('error', 'Please fill out the entire form.');
