@@ -219,12 +219,14 @@
   
   Preso.byUser = function(name, success) {
     db.view('swinger/presos_by_user', Preso.mergeCallbacks({
-      endkey: [name],
+      startkey: [name, "a"],
+      endkey: [name, null],
       descending: true,
+      include_docs: true,
       success: function(resp) {
         var presos = [];
         $.each(resp.rows, function(k, v) {
-          presos.push(new Preso(v.value));
+          presos.push(new Preso(v.doc));
         });
         Sammy.log(name, presos);
         success(presos);
