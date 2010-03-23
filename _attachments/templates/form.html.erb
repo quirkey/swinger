@@ -11,7 +11,7 @@
     <%= f.open({action: form_action}) %>
       <p><%= f.label('name', 'Name') %><%= f.text('name') %></p>
       <p><%= f.label('_id', 'Short ID (optional)') %><%= f.text('_id', {disabled: preso.id() ? 'disabled' : null}) %></p>
-      <p><%= f.label('share', 'Share on homepage?') %><%= f.checkbox('share', 'true') %></p>
+      <p><%= f.label('share', 'Share on homepage?') %><%= f.checkbox('share', true) %></p>
       <p><label>Choose a theme:</label></p>
       <div class="themes">
         <% $.each(themes, function(i, v) { %>

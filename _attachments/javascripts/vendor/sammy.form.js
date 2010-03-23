@@ -55,6 +55,11 @@
       return simple_element('label', $.extend(attrs, attributes), content);
     },
         
+    hidden: function(keypath, attributes) {
+      attributes = $.extend({type: 'hidden'}, this.attributesForKeyPath(keypath), attributes);
+      return simple_element('input', attributes);
+    },
+        
     text: function(keypath, attributes) {
       attributes = $.extend({type: 'text'}, this.attributesForKeyPath(keypath), attributes);
       return simple_element('input', attributes);
@@ -104,7 +109,10 @@
     },
     
     checkbox: function(keypath, value, attributes) {
-      return this.radio(keypath, value, $.extend({type: 'checkbox'}, attributes));
+      var content = "";
+      content += this.hidden(keypath, {'value': !value});
+      content += this.radio(keypath, value, $.extend({type: 'checkbox'}, attributes));
+      return content;
     },
     
     submit: function(attributes) {

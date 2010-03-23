@@ -661,6 +661,7 @@
     this.post('#/preso/:id/edit', function(e) {
       showLoader();
       e.withCurrentPreso(function(preso) {
+        e.log('update params', e.params['preso']);
         $.extend(preso.attributes, e.params['preso']);
         preso.save(function() {
           showNotification('success', 'Your presentation has been updated');
