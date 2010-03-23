@@ -549,7 +549,7 @@
       });
     });
     
-    this.before({only: /\#\/(create|new)/}, function() {
+    this.before({only: /\#\/(create|new|preso\/([^\/]+)\/edit)/}, function() {
       if (!User.isLoggedIn()) {
        showNotification('error', 'Sorry, please login or signup to create a presentation.');
        this.redirect('#/login');

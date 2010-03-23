@@ -16,9 +16,11 @@
     html += tag;
     if (typeof attributes != 'undefined') {
       $.each(attributes, function(key, value) {
-        html += " " + key + "=\"";
-        html += getStringContent(attributes, value);
-        html += "\"";
+        if (value != null) {
+          html += " " + key + "=\"";
+          html += getStringContent(attributes, value);
+          html += "\"";
+        }
       });
     }
     if (content === false) {
