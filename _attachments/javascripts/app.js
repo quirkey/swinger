@@ -785,6 +785,22 @@
           e.partial('templates/display.html.erb', function(display) {
             e.$element().html(display);
             e.displaySlide(preso.slide(e.params.slide_id));
+            $('#display .slide').swipe({
+              threshold: {
+                x: 20,
+                y: 30
+              },
+              swipeLeft: function() {
+                 e.log('swipeLeft');
+                 e.trigger('display-nextslide'); 
+              },
+              swipeRight: function() { 
+                e.log('swipeRight');
+                e.trigger('display-prevslide'); 
+              }
+            }).dblclick(function() {
+              e.trigger('display-togglenav');
+            });
           });
         }
       });

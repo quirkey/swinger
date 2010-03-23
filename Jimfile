@@ -15,6 +15,7 @@ jquery.ui.widget 1.8rc3.custom
 jquery.ui.mouse 1.8rc3.custom
 jquery.ui.sortable 1.8rc3.custom
 jquery.tabby
+jquery.swipe
 prettify
 showdown
 sammy 0.5.1
