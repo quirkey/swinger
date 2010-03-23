@@ -1,5 +1,5 @@
 body {
-  background: #999;
+  background: #E7E7E7;
 }
 #container {
   width: 100%;
@@ -19,12 +19,18 @@ body {
   position: fixed;
   bottom: 0px;
 }
+a:link, a:visited {
+  color: #4B89D0;
+}
+a:hover {
+  color: #305A89;
+}
 p.description {
   line-height: 200%;
   font-weight: normal;
 }
 p.description a:link, p.description a:visited {
-  color: #88D8F0;
+  color: #4B89D0;
   font-weight:bold;
 }
 p.description a:hover {
@@ -36,7 +42,9 @@ input[type="text"], input[type="password"], textarea {
   -moz-border-radius: 3px;
 }
 .header {
+  border-top: 1px solid #CCC;
   height:20px;
+  padding: 6px;
 }
 .nav .sep {
   float:left;
@@ -53,6 +61,13 @@ input[type="text"], input[type="password"], textarea {
 }
 .nav a {
   font-weight: bold;
+  color: #E7E7E7;
+}
+.nav .title {
+  float: left;
+  padding: 9px 8px 0px 8px;
+  color: #A9CCFA;
+  text-shadow: 0px 1px 1px #000;
 }
 .user-nav {
   position: absolute;
@@ -71,7 +86,8 @@ input[type="text"], input[type="password"], textarea {
 .user-nav a:visited,
 #footer a:link, 
 #footer a:visited {
-  color:#999;
+  color:#E7E7E7;
+  text-decoration:none;
 }
 .user-nav a:hover,
 #footer a:hover {
@@ -115,6 +131,13 @@ iframe {
   text-align: center;
   z-index: 400;
 }
+.notification {
+  width: 100%;
+  text-align:center;
+  padding: 10px 0px;
+  font-size: 16px;
+  text-shadow: 0px 1px 1px #333;
+}
 
 #modal-loader {
   background: #000;
@@ -123,17 +146,27 @@ iframe {
 #modal-notification {
   width: 300px;
 }
-
-#modal-notification.success {
-  background: #486A78;
+#inline-notification {
+  position: relative;
+  border-bottom: 1px solid #FFF;
+}
+#modal-notification.success, 
+.notification.success {
+  background: #118F3A;
+  color: #FFF;
 }
 
-#modal-notification.error {
+#modal-notification.error,
+.notification.error {
   background: #992A20;
+  color: #FFF;
 }
-
+#inline-notification button {
+  position: absolute;
+  top: 2px;
+  right: 25px;
+}
 #create {
-  background: #AAA;
   padding: 20px;
 }
 #create input, #create button {
@@ -142,20 +175,37 @@ iframe {
 #create .simple-form {
   width: 100%
 }
-
+.presos {
+  margin-bottom: 25px;
+}
 .preso {
   width: 300px;
-  height: 300px;
-  border: 1px solid #666;
-  -webkit-box-shadow: 0 0 15px #333;
-  -moz-box-shadow: 0 0 15px #333;
+  height: 360px;
   float:left;
   margin: 10px;
   cursor: pointer;
 }
+.preso .slide {
+  -webkit-box-shadow: 2px 2px 9px #666;
+  -moz-box-shadow: 2px 2px 9px #666;
+/*  border: 1px solid #666;*/
+}
 .preso.selected {
-  -webkit-box-shadow: 0 0 15px #FFF;
-  -moz-box-shadow: 0 0 15px #FFF;
+  -webkit-box-shadow: 15px 15px 25px #333;
+  -moz-box-shadow: 15px 15px 25px #333;
+  border: 1px solid #333;
+}
+.preso .preso-meta {
+  clear: both;
+  color: #999;
+}
+.preso .preso-meta h4 {
+  color: #000;
+  font-size: 16px;
+  padding: 10px 0px;
+}
+.preso .preso-meta h4 span a {
+  float: right;
 }
 .submit {
   float:right;
@@ -163,6 +213,56 @@ iframe {
 .slide-edit {
   width: 100%;
   color:#333;
+}
+.slide-sort-view {
+  width: 200px;
+  position: absolute;
+  height: 100%;
+  float:left;
+  border-right: 2px solid #999;
+}
+.slide-sort-view .header {
+  font-size: 14px;
+}
+.slide-sort {
+  width: 180px;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #AAA;
+}
+.slide-sort .slide {
+  margin: 10px;
+  position:relative;
+  -webkit-box-shadow: 0 0 15px #333;
+  -moz-box-shadow: 0 0 15px #333;
+}
+.slide-sort .slide .slide-num {
+  position: absolute;
+  line-height: 100%;
+  font-family: Arial, sans-serif;
+  bottom: 10px;
+  right: 10px;
+  text-align: center;
+  min-width: 15px;
+  font-size: 12px;
+  color: #FFF;
+  background: #333;
+  padding: 4px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+}
+
+.slide-sort .slide-placeholder {
+  width: auto;
+  background: #000;
+  height: 100px;
+  display:block;
+}
+.slide-edit-view {
+  width: 100%;
+  margin-left: 202px;
+  float: left;
 }
 .slide-form h3, h3.section {
   font-size: 16px;
@@ -186,9 +286,12 @@ iframe {
 }
 .slide-form textarea {
   width: 99%;
+  font-family: Inconsolata, Monaco, Monospace;
+  font-size: 14px;
 }
 .slide-form textarea.content-textarea {
   height: 300px;
+  font-size: 18px;
 }
 .slide-attachments {
   margin: 20px;
@@ -209,6 +312,15 @@ iframe {
   -moz-box-shadow: 0 0 15px #333;
 }
 
+.slide-sort {
+  width: 200px;
+}
+.slide-sort .slide {
+  width: 180px;
+  height: 180px;
+}
+
+
 .slide {
   float:left;
   background: #FFF;
@@ -218,9 +330,7 @@ iframe {
   background: #F1F1F1;
 }
 .simple-form {
-  width: 50%;
   min-width: 400px;
-  float:left;
 }
 .simple-form h3 {
   text-align:left;
@@ -235,6 +345,11 @@ iframe {
   width: 150px;
   padding: 8px 0px 0px;
   float: left;
+}
+.simple-form input[type=text],
+.simple-form input[type=password] {
+  width: 250px;
+  font-size: 14px;
 }
 .simple-form .submit {
   float:none;

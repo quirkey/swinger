@@ -1,0 +1,32 @@
+<div id="create">  
+  <h3 class="section">
+    <% if (!preso.id()) { %>
+      Create a new swingin' presentation
+    <% } else { %>
+      Update your presentation "<%= preso.attributes.name %>"
+    <% } %>
+  </h3>
+  <div class="simple-form">
+    <% formFor('preso', preso.attributes, function(f) { %>
+    <%= f.open({action: form_action}) %>
+      <p><%= f.label('name', 'Name') %><%= f.text('name') %></p>
+      <p><%= f.label('_id', 'Short ID (optional)') %><%= f.text('_id', {disabled: preso.id() ? 'disabled' : null}) %></p>
+      <p><%= f.label('share', 'Share on homepage?') %><%= f.checkbox('share', 'true') %></p>
+      <p><label>Choose a theme:</label></p>
+      <div class="themes">
+        <% $.each(themes, function(i, v) { %>
+          <%= f.radio('theme', v, {style: 'display:none;'}) %>
+            <div class="preso" style="width: 150px; height: 150px;" data-theme="<%= v %>">
+              <div class="slide active <%= v %>">
+                <div class="content"><h1><%= v %></h1></div>
+              </div>
+            </div>
+        <% }); %>        
+        <div class="clear"></div>
+      </div>
+      <p><button type="submit" class="submit default"><%= preso.id() ? 'Update' : 'Create' %></button> or <a href="#/preso/<%= preso.id() %>/delete" class="delete">Delete</a></p>
+    <%= f.close() %>
+    <% }); %>
+  </div>
+  <div class="clear"></div>
+</div>

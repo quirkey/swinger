@@ -3,9 +3,7 @@
   <% $.each(preso.attributes.slides, function(i, slide) { %>
     <% if (slide) { %>
     <div class="slide active <%= slide.theme %>" id="slide-<%= slide.position %>" style="<%= slide.additional_css %>">
-      <div class="content">
-<%= slide.content_html %>
-      </div>
+      <div class="content"><%= slide.content_html %></div>
     </div>
     <% } %>
   <% }); %>

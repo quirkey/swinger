@@ -1,11 +1,20 @@
 <% $.each(presos, function(i, preso) { %>
   <% var slide = preso.slides()[0]; %>
   <% if (slide) { %>
-  <div class="preso" title="<%= preso.title %>" rel="<%= preso.id() %>">
+  <div class="preso" title="<%= preso.attributes.name %>" rel="<%= preso.id() %>">
     <div class="slide active <%= slide.theme %>" id="slide-<%= slide.position %>">
       <div class="content">
 <%= slide.content_html %>
       </div>
+    </div>
+    <div class="preso-meta">
+      <h4><%= preso.attributes.name %> <span><a href="#/preso/<%= preso.id() %>/display">Play</a></span></h4>
+      <p>
+        by <%= preso.attributes.user %> 
+        <% if (isLoggedInAs(preso.attributes.user)) { %>
+        / <a href="#/preso/<%= preso.id() %>/edit/1">Edit</a>
+        <% } %>
+      </p>
     </div>
   </div>
 <% } %>

@@ -1,0 +1,26 @@
+// bundled_path: _attachments/javascripts/bundled.js
+// compressed_path: _attachments/javascripts/compressed.js
+// vendor_dir: _attachments/javascripts/vendor
+
+/ start adding your requirements below:
+
+json2
+sha1
+jquery 1.4.2
+jquery.couch 0.11
+jquery.form 2.40
+jquery.easing
+jquery.ui.core 1.8rc3.custom
+jquery.ui.widget 1.8rc3.custom
+jquery.ui.mouse 1.8rc3.custom
+jquery.ui.sortable 1.8rc3.custom
+jquery.tabby
+jquery.swipe
+prettify
+showdown
+sammy 0.5.1
+sammy.storage 0.5.1
+sammy.template 0.5.1
+sammy.nested_params 0.5.1
+sammy.form
+sammy.title

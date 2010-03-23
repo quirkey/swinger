@@ -1,6 +1,7 @@
 ;(function($) {
   
   $.easing.def = 'easeInOutCubic';
+  $.fn.tabby.defaults.tabString = "  ";
   
   $.fn.center = function() {
     var dimensions = windowDimensions();
@@ -16,6 +17,37 @@
   var dbname = window.location.pathname.split('/')[1] || 'swinger',
       db     = $.couch.db(dbname),
       default_slide_scale = {width: 1280, height: 650};
+  
+  var showdown = new Showdown.converter();
+  
+  var end_block_re = /^\s*@@@\s*$/;
+  var start_block_re = /@@@\s([\w\d]+)\s*/;
+  
+  function markdown(text) {
+    // includes special code block handling
+    var new_text = [],
+        prev = '',
+        in_code_block = false;
+    $.each(text.split(/[\n\r]/), function(i, line) {
+      if (!in_code_block) {
+        if (line.match(start_block_re)) {
+          in_code_block = true;
+          prev = line.replace(start_block_re, "<pre class=\"prettyprint lang-$1\"><code>");
+        } else {
+          new_text.push(line);
+        }
+      } else {
+        if (line.match(end_block_re)) {
+          in_code_block = false;
+          new_text.push("</code></pre>");
+        } else {
+          new_text.push(prev + line.replace(/</g,"&lt;").replace(/>/g,"&gt;"));
+          prev = '';
+        }
+      }
+    });
+    return showdown.makeHtml(new_text.join("\n"));
+  };
   
   function windowDimensions() {
     return {
@@ -43,7 +75,7 @@
     }
   };
   
-  function showNotification(status, message) {
+  function showModal(status, message) {
     var $notification = $('#modal-notification');
     $notification
       .attr('class', 'modal')
@@ -56,6 +88,23 @@
       .center()
       .fadeIn(400);
   };
+
+  function showNotification(status, message) {
+    var $notification = $('#inline-notification');
+    $notification
+      .attr('class', 'notification')
+      .addClass(status)   
+      .find('.message')
+        .html(message).end()
+      .find('button').one('click', function() {
+        $(this).parent().slideUp(200);
+      }).end()
+      .slideDown(400);
+    setTimeout(function() {
+      $notification.slideUp();
+    }, 6000)
+  };
+  
   
   User = {
     _current_user: false,
@@ -121,7 +170,8 @@
     var default_doc = {
       name: "",
       slides: [],
-      type: "presentation"
+      type: "presentation",
+      share: true
     };
     this.database   = db;
     this.attributes = $.extend({}, default_doc, doc);
@@ -146,6 +196,10 @@
       success: function(resp) {
         var p = new Preso(resp);
         success.apply(p, [p]);
+      },
+      error: function(status, error, reason) {
+        showNotification('error', "Sorry, the presentation you were looking for can't be found.");
+        window.location.hash = '#/'
       }
     }));
   };
@@ -203,6 +257,14 @@
         }
       }));
     },
+    destroy: function(callback) {
+      var self = this;
+      this.database.removeDoc(this.attributes, Preso.mergeCallbacks({
+        success: function(resp) {
+          if (callback) { callback.apply(self, [resp]); }
+        }
+      }));
+    },
     slide: function(num, update) {
       var s;
       num = parseInt(num) - 1;
@@ -231,16 +293,24 @@
   });
   
   
+  Slide = function(selector) {
+    this.selector = selector;
+    this.$element  = $(selector);
+  };
   
-  Slide = {
+  $.extend(Slide.prototype, {
     goTo: function(num, transition) {
       // slide left
       var dimensions   = windowDimensions();
-      var total_slides = $('#slides .slide').length;
+          total_slides = this.$element.length,
+          slide = this;
+          
       switch(transition) {
         case 'fade':
-          $('#slides .slide').css({top: '0px', left: '0px', opacity: 0, zIndex: 0}).removeClass('active');
-          var $current = $('.slide.active'), $next = this.$slide(num);
+          this.$element.css({top: '0px', left: '0px', opacity: 0, zIndex: 0}).removeClass('active');
+          var $current = this.$element.filter('.active'), 
+              $next = this.$slide(num);
+              
           $current
             .css({opacity: 1, position:'absolute', top: '0px', left: '0px'})
             .animate({opacity: 0}, function() {
@@ -263,71 +333,103 @@
           this.$slide(num).addClass('active');
         break;
         default: //switch
-          $('#slides .active').hide().removeClass('active');
-          this.$slide(num).addClass('active').show();
+          Sammy.log('switch', num, slide.$slide(num)[0]);
+          slide.$element.filter('.active').hide().removeClass('active');
+          slide.$slide(num).addClass('active').show();
         break;
       }
     },
-    setContentRatio: function(dimensions) {
+    setContent: function(content) {
+      // Sammy.log('setContent', content, this.$element.find('.content'));
+      this.$element.find('.content').html(content);
+    },
+    setTheme: function(theme) {
+      this.$element.attr('class', 'slide active').addClass(theme);
+    },
+    setContentRatio: function(dimensions, attempts) {
       if (!dimensions) dimensions = windowDimensions();
-      Sammy.log('setContentRatio', dimensions);
-      var ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
-      Sammy.log(ratio, $('.slide .content'));
-      $('.slide.active .content').css({fontSize: ratio + "%"});
-      $('.slide.active .content img').each(function() {
-        var initial_width;
-        if ($(this).data('originalWidth')) {
-          initial_width = $(this).data('originalWidth');
-        } else {
-          initial_width = $(this).width();
-          $(this).data('originalWidth', initial_width);
-        }
-        Sammy.log('set img width', initial_width, 'ratio', ratio);
-        $(this).css('width', initial_width * (ratio / 100) + "px");
-      });
+      if (!attempts) attempts = 1;
+      var slide = this, 
+          ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
+      // Sammy.log('setContentRatio', dimensions, ratio);
+      this.$element
+        .find('.content').css({fontSize: ratio + "%"})
+        .find('img').each(function() {
+          var initial_width, new_width;
+          if ($(this).data('originalWidth')) {
+            initial_width = $(this).data('originalWidth');
+          } else {
+            initial_width = $(this).width();
+            if (initial_width <= 0 && attempts < 3) {
+              setTimeout(function() {
+                slide.setContentRatio(dimensions, attempts + 1);
+              }, 100 * attempts);
+              return false;
+            }
+            $(this).data('originalWidth', initial_width);
+          }
+          new_width = initial_width * (ratio / 100);
+          // Sammy.log('set img width', initial_width, 'ratio', ratio, 'new_width', new_width);
+          if (new_width > 0) { $(this).css('width', new_width + "px"); }
+        });
     },
     setCSS: function(dimensions) {
       if (!dimensions) dimensions = windowDimensions();
       $('#display').css(dimensions);
-      Sammy.log('setCSS', dimensions);
-      $('.slide').css(dimensions);
+      var slide = this;
+      // Sammy.log('setCSS', dimensions);
+      this.$element.css(dimensions);
       $('#navigation').css({width: dimensions.width});
-      this.setContentRatio(dimensions);
-      this.setVerticalAlignment(dimensions);
-      this.highlightCode();
+      slide.setContentRatio(dimensions);
+      slide.highlightCode();
+      slide.setVerticalAlignment(dimensions);
     },
     setVerticalAlignment: function(dimensions) {
-      var $content = $('.slide.active .content');
-      var content_height = $content.height();
-      var margin = Math.floor((dimensions.height - content_height) / 2);
-      Sammy.log('height', dimensions.height, 'content_height', content_height, 'margin', margin);
+      var $content       = this.$element.filter('.active').find('.content'),
+          content_height = $content.height(),
+          margin = Math.floor((dimensions.height - content_height) / 2);
+      // Sammy.log('height', dimensions.height, 'content_height', content_height, 'margin', margin);
       if (margin > 0) { $content.css({marginTop: margin + "px"}); }
     },
     highlightCode: function() {
-      sh_highlightDocument('javascripts/shjs/lang/', '.min.js');
+      prettyPrint();
+    },
+    drawPreview: function(val) {
+      // to prevent constant updates
+      var slide = this;
+      if (slide.redraw_timeout) {
+        clearTimeout(slide.redraw_timeout);
+      }
+      slide.redraw_timeout = setTimeout(function() {
+        // calculate dimensions
+        var width_offset = $('.slide-sort').is(':visible') ? 265 : 40,
+            width = ((windowDimensions().width - width_offset) / 2),
+            height = Math.floor((width * 0.75)),
+            dimensions= {width: width, height: height};
+        slide.setContent(markdown(val));  
+        slide.setCSS(dimensions);
+      }, 200);
     },
     $slide: function(num) {
-      return $('#slide-' + num);
+      return this.$element.filter('#slide-' + num);
     }
-  };
-      
+  });
+   
   var app = $.sammy(function() {
     this.use(Sammy.Template);
     this.use(Sammy.NestedParams);
+    this.use(Sammy.Form);
+    this.use(Sammy.Title);
+    
+    this.setTitle('// Swinger //');
     
     this.debug = true;
     this.element_selector = '#container';
-    this.template_engine = 'template';
-    
+    this.template_engine = 'template';   
     
     var current_preso = false;
     var current_slide = 1;
-    
-    var showdown = new Showdown.converter();
-    
-    var end_block_re = /^\s*@@@\s*$/;
-    var start_block_re = /@@@\s([\w\d]+)/;
-    
+        
     var display_keymap = {
       37: 'display-prevslide', // left arrow
       38: 'display-prevslide', // up arrow
@@ -361,13 +463,15 @@
         'basic',
         'nakajima',
         'quirkey',
-        'nakajima-black'
+        'nakajima-black',
+        'sammy'
       ],
       transitions: [
         'switch',
         'fade',
         'slide-left'
       ],
+      markdown: markdown,
       showLoggedIn: function(userCtx) {
         if (userCtx && userCtx.name) {
           $('.user-nav')
@@ -382,8 +486,11 @@
             .find('.guest').show().end()
         }
       },
+      isLoggedInAs: function(username) {
+        return User.isLoggedIn() && User._current_user.name == username;
+      },
       showNav: function() { 
-        $('.nav, .user-nav, #footer').show().find('.preso-link').hide();
+        $('.nav, .user-nav, #footer').show().find('.preso-links').hide();
       },
       hideNav: function() {
         $('.nav, .user-nav, #footer').hide();
@@ -416,53 +523,21 @@
         }
       },
       displaySlide: function(slide) {
-        Slide.goTo(slide.position, slide.transition);
-        Slide.setCSS();
+        var display_slide = new Slide('#display .slide');
+        display_slide.goTo(slide.position, slide.transition);
+        display_slide.setCSS();
         current_slide = slide.position;
-      },
-      drawSlidePreview: function(val) {
-        // calculate dimensions
-        var width = ((windowDimensions().width / 2) - 40);
-        var height = Math.floor((width * 0.75));
-        var dimensions= {
-          width: width,
-          height: height
-        }
-        $('.slide .content').html(this.markdown(val));  
-        Slide.setCSS(dimensions);
-      },
-      setSlideTheme: function(theme) {
-        $('.slide').attr('class', 'slide active').addClass(theme);
+        // set the jump input
+        $('.jump input[name="num"]').val(current_slide);
       },
       setUpLinksForPreso: function(preso) {
         var context = this;
-        $('.nav a.preso-link').show().each(function() {
+        $('.preso-name').text(preso.attributes.name);
+        $('.nav a.preso-link').each(function() {
           var meth = $(this).attr('rel');
           $(this).attr('href', context.join('/','#', 'preso', preso.id(), meth));
         });
-      },
-      markdown: function(text) {
-        // includes special code block handling
-        var new_text = [];
-        var in_code_block = false;
-        $.each(text.split(/[\n\r]/), function(i, line) {
-          if (!in_code_block) {
-            if (line.match(start_block_re)) {
-              in_code_block = true;
-              new_text.push(line.replace(start_block_re, "<pre class=\"sh_$1\"><code>"));
-            } else {
-              new_text.push(line);
-            }
-          } else {
-            if (line.match(end_block_re)) {
-              in_code_block = false;
-              new_text.push("</code></pre>");
-            } else {
-              new_text.push("" + line);
-            }
-          }
-        });
-        return showdown.makeHtml(new_text.join("\n"));
+        $('.preso-links').show();
       }
     });
     
@@ -474,27 +549,29 @@
       });
     });
     
-    this.before({only: /\#\/(create|new)/}, function() {
-       if (!User.isLoggedIn()) {
-         showNotification('error', 'Sorry, please login or signup to create a presentation.');
-         e.redirect('#/login');
-         return false;
-       }
-     });
+    this.before({only: /\#\/(create|new|preso\/([^\/]+)\/edit)$/}, function() {
+      if (!User.isLoggedIn()) {
+       showNotification('error', 'Sorry, please login or signup to create a presentation.');
+       this.app.last_location_before_redirect = this.path;
+       this.redirect('#/login');
+       return false;
+      }
+    });
 
    this.before({except: /display/}, function() {
      this.showNav();
    });
     
     this.get('#/', function(e) {
+      this.title('Welcome');
       showLoader();
       this.partial('templates/index.html.erb', function(t) {
         this.app.swap(t);
         if (User.isLoggedIn()) {
           Preso.byUser(User._current_user.name, function(presos) {
             e.partial('templates/_presos.html.erb', {presos: presos}, function(p) {
-              $('#presos').html(p);
-              Slide.setCSS({width: 300, height: 300});
+              $('#presos').html(p).append('<div class="clear">');;
+              new Slide('#presos .slide').setCSS({width: 300, height: 300});
             });
           })
         } else {
@@ -502,21 +579,23 @@
         }
         Preso.all(function(presos) {
           e.partial('templates/_presos.html.erb', {presos: presos}, function(p) {
-            $('#all-presos').html(p);
-            Slide.setCSS({width: 300, height: 300});
+            $('#all-presos').html(p).append('<div class="clear">');
+            new Slide('#all-presos .slide').setCSS({width: 300, height: 300});
           });
         });
       });
     });
     
     this.get('#/login', function(e) {
+      this.title('Login')
       e.partial('templates/login.html.erb');
     });
     
     this.post('#/login', function(e) {
       User.login(this.params['name'], this.params['password'], function(user) {
-        showNotification('success', 'Thanks for logging in ' + user.name);
-        e.redirect('#/');
+        showNotification('success', 'Thanks for logging in, ' + user.name + '!');
+        e.redirect(e.app.last_location_before_redirect || '#/');
+        e.app.last_location_before_redirect = null;
       })
     });    
     
@@ -539,7 +618,8 @@
         // create
         User.signup(this.params['name'], this.params['email'], this.params['password'], function() {
           showNotification('success', 'Thanks for signing up! You can start making presentations now.');
-          e.redirect('#/');
+          e.redirect(e.app.last_location_before_redirect || '#/');
+          e.app.last_location_before_redirect = null;
         });
       } else {
         showNotification('error', 'Please fill out the entire form.');
@@ -549,65 +629,142 @@
     });
     
     this.get('#/new', function(e) {
-      this.partial('templates/new.html.erb', function(html) {
+      this.title('New Presentation')
+      this.partial('templates/form.html.erb', {preso: new Preso(), form_action: '#/create'}, function(html) {
         this.app.swap(html);
-        Slide.setCSS({width: 150, height: 150});
-        $('.preso').click(function() {
-          Sammy.log('click preso', this);
-          var theme = $(this).attr('data-theme');
-          $('input[name="preso[theme]"][value="'+ theme + '"]').attr('checked', 'checked');
-          $(this).addClass('selected');
-          $(this).siblings('.preso').removeClass('selected');
-        })
+        new Slide('.slide').setCSS({width: 150, height: 150});
       });
     });
     
     this.post('#/create', function(e) {
       var preso = new Preso($.extend({}, e.params['preso'], {user: User._current_user.name}));
       preso.save(function() {
+        showNotification('success', 'Your presentation has been created');
         e.redirect('#', 'preso', this.attributes._id, 'edit', '1');
       });
     });
     
+    this.get('#/preso/:id/edit', function(e) {
+      showLoader();
+      e.withCurrentPreso(function(preso) {
+        this.title('Editing Presentation', preso.attributes.name);
+        e.preso = preso;
+        e.partial('templates/form.html.erb', {form_action: '#/preso/' + preso.id() +'/edit'}, function(html) {
+          e.app.swap(html);
+          new Slide('.slide').setCSS({width: 150, height: 150});
+        });
+      });
+    });
+    
+    this.post('#/preso/:id/edit', function(e) {
+      showLoader();
+      e.withCurrentPreso(function(preso) {
+        $.extend(preso.attributes, e.params['preso']);
+        preso.save(function() {
+          showNotification('success', 'Your presentation has been updated');
+          e.redirect('#', 'preso', this.attributes._id, 'edit', '1');
+        });
+      });
+    });
+    
+    this.get('#/preso/:id/delete', function(e) {
+      e.withCurrentPreso(function(preso) {
+        if (confirm('Are you sure you want to delete this presentation? There is no undo.')) {
+          preso.destroy(function() {
+            showNotification('success', 'Your presentation has been deleted.');
+            e.redirect('#/');
+          })
+        } else {
+          alert('OK. No action taken.');
+          e.redirect('#', 'preso', preso.id(), 'edit');
+        }
+      });
+    })
+        
     this.get('#/preso/:id/edit/:slide_id', function(e) {
       showLoader();
       e.withCurrentPreso(function(preso) {
         e.preso = preso;
+        e.title('Editing Presentation', preso.attributes.name);
         e.partial('templates/edit.html.erb', {slide: e.preso.slide(e.params.slide_id)}, function(t) {
           e.app.swap(t);
           e.partial('templates/_upload_form.html.erb', function(data) {
             e.$element().find('#upload_form').html(data);
           });
+          var slide_preview = new Slide('.slide-preview .slide');
+          var slide_sort = new Slide('.slide-sort .slide');
+          slide_sort.setCSS({width: 160, height: 160});
+          
+          $('.slide-sort')
+            // set up the sortable
+            .sortable({
+              items: '.slide',
+              axis: 'y',
+              scrollSpeed: 60,
+              stop: function(event, ui) {
+                e.trigger('slide-sort', {preso: preso, order: $(this).sortable('toArray')});
+              }
+            })
+            // clicking a slide goes to that slide
+            .find('.slide')
+              .dblclick(function() {
+                var slide_id = $(this).attr('id').replace('sort-slide-', '');
+                e.redirect('#','preso', preso.id(), 'edit', slide_id);
+              })
+              .hover(function() {
+                var $slide = $(this),
+                    slide_id = $slide.attr('id').replace('sort-slide-', ''),
+                    $slide_num = $slide.find('.slide-num');
+                if ($slide_num.length === 0) {
+                  $slide_num = $('<div/>', {'class': 'slide-num'}).hide().appendTo($slide);
+                } 
+                $slide_num.text(slide_id).show();
+              }, function() {
+                $(this).find('.slide-num').hide();
+              })
+            // jump to the right slide in the slide sort
+            .filter('#sort-slide-' + e.params.slide_id).each(function() {
+              var $slide = $(this);
+              setTimeout(function() { 
+                var top = $slide.offset().top - 160;
+                Sammy.log('top', top);
+                $('.slide-sort').scrollTop(top)
+              }, 100);
+            });
+          
           $('.slide-form')
             // live preview of slide editing
-            .find('textarea[name="content"]')
-              .bind('keyup', function() {
-                e.drawSlidePreview($(this).val());
-              }).trigger('keyup').end()
-            .find('textarea[name="additional_css"]')
+            .find('textarea[name="slide[content]"]')
+              .tabby()
+              .bind('keyup', function(ev) {
+                if ((ev.which == $.ui.keyCode.RIGHT) && ev.ctrlKey) {
+                  ev.stopImmediatePropagation();
+                  $(this).parents('form').submit();
+                } else {
+                  slide_preview.drawPreview($(this).val());
+                }
+              }).trigger('keyup').focus().end()
+            .find('textarea[name="slide[additional_css]"]')
               .bind('keyup', function() {
                 var area = this;
-                $('.slide').attr('style', function() {
+                slide_preview.$element.attr('style', function() {
                   return $(this).attr('style') + ';' + $(area).val();
                 });
               }).trigger('keyup').end()
             .find('.theme-select')
               .bind('change', function() {
-                e.setSlideTheme($(this).val());
+                slide_preview.setTheme($(this).val());
               }).triggerHandler('change');
+          $(window).trigger('resize');
         });
       });
     });
     
     this.post('#/preso/:id/edit/:slide_id', function(e) {
       e.withCurrentPreso(function(preso) {
-        preso.slide(e.params.slide_id, {
-          transition: e.params['transition'],
-          theme: e.params['theme'],
-          content: e.params['content'], 
-          content_html: e.markdown(e.params['content']),
-          additional_css: e.params['additional_css']
-        });
+        preso.slide(e.params.slide_id, $.extend({}, e.params['slide'], {
+          content_html: markdown(e.params['slide']['content'])
+        }));
         preso.save(function(p) {
           var next_id = parseInt(e.params.slide_id) + 1;
           e.redirect('#', 'preso', this.attributes._id, 'edit', next_id);
@@ -622,6 +779,7 @@
     this.get('#/preso/:id/display/:slide_id', function(e) {
       this.hideNav();
       e.withCurrentPreso(function(preso) {
+        e.title(preso.attributes.name, "(" + e.params.slide_id + " of " + preso.slides().length + ")");
         e.preso = preso;
         // check if display has already been rendered
         if ($('#display[rel="'+ preso.id() + '"]').length > 0) {
@@ -630,6 +788,22 @@
           e.partial('templates/display.html.erb', function(display) {
             e.$element().html(display);
             e.displaySlide(preso.slide(e.params.slide_id));
+            $('#display .slide').swipe({
+              threshold: {
+                x: 20,
+                y: 30
+              },
+              swipeLeft: function() {
+                 e.log('swipeLeft');
+                 e.trigger('display-nextslide'); 
+              },
+              swipeRight: function() { 
+                e.log('swipeRight');
+                e.trigger('display-prevslide'); 
+              }
+            }).dblclick(function() {
+              e.trigger('display-togglenav');
+            });
           });
         }
       });
@@ -670,6 +844,35 @@
     this.post('#/preso/:id/jump', function(e) {
       e.withCurrentPreso(function(preso) {
         e.redirect('#', 'preso', preso.id(), 'display', this.params['num']);
+      });
+    });
+    
+    this.bind('slide-sort', function(e, data) {
+      this.log('slide-sort');
+      var context = this,
+          prefix = "sort-slide-",
+          preso = data['preso'],
+          order = data['order'],
+          slides = preso.slides(),
+          new_slides = [];
+          
+      // edit the slide order and position
+      $.each(order, function(i, new_id) {
+        var slide = slides[parseInt(new_id.replace(prefix, '')) - 1];
+        slide.position = i + 1;
+        new_slides[i] = slide;
+      });
+      preso.attributes.slides = new_slides;
+      // save the preso
+      preso.save(function() {
+        // reapply the slide ids
+        $('.slide-sort')
+          .find('.slide')
+            .each(function(i, slide) {
+              $(this).attr('id', prefix + (i + 1))
+            })
+            .end()
+          .sortable('refresh');
       });
     });
     
@@ -733,7 +936,7 @@
       
       $('.presos .preso')
         .live('click', function() {
-          context.redirect('#', 'preso', $(this).attr('rel'), 'edit', 1);
+          context.redirect('#', 'preso', $(this).attr('rel'), 'display', 1);
         });
       
       $('.linked-button')
@@ -746,9 +949,29 @@
         .live('click', function(e) {
           var attachment_url = $(this).attr('rel');
           var attachment_name = $(this).text();
-          $('textarea[name="content"]')
-             .val($('textarea[name="content"]').val() + "\n![" + attachment_name + "](" + attachment_url + ")")
-            .triggerHandler('keyup');
+          $('textarea[name="slide[content]"]').val(function(i, val) {
+             return val + "\n![" + attachment_name + "](" + attachment_url + ")";
+          }).triggerHandler('keyup');
+        });
+      
+      // preso theme selection
+      $('.themes .preso')
+        .live('click', function() {
+          Sammy.log('click preso', this);
+          var theme = $(this).attr('data-theme');
+          $('input[name="preso[theme]"][value="'+ theme + '"]').attr('checked', 'checked');
+          $(this).addClass('selected');
+          $(this).siblings('.preso').removeClass('selected');
+        });
+        
+      $('.slide-sort')
+        .live('resize', function() {
+          $(this).css('height', windowDimensions().height - $('#footer').outerHeight() - $(this).offset().top);
+        });
+      
+      $('.slide-edit-view')
+        .live('resize', function() {
+          $(this).css('width', windowDimensions().width - 202);
         });
       
       $('#navigation')
@@ -761,10 +984,12 @@
         
       $(window).bind('resize', function() {
         if ($('#display').length > 0) {
-          Slide.setCSS();
+          new Slide('#display .slide').setCSS();
         } else {
-          $('textarea[name="content"]').triggerHandler('keyup');
+          $('textarea[name="slide[content]"]').trigger('keyup');
         }
+        $('.slide-sort').trigger('resize');
+        $('.slide-edit-view').trigger('resize');
       });
         
     });
