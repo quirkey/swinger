@@ -697,13 +697,14 @@
             .sortable({
               items: '.slide',
               axis: 'y',
+              scrollSpeed: 60,
               stop: function(event, ui) {
                 e.trigger('slide-sort', {preso: preso, order: $(this).sortable('toArray')});
               }
             })
             // clicking a slide goes to that slide
             .find('.slide')
-              .click(function() {
+              .dblclick(function() {
                 var slide_id = $(this).attr('id').replace('sort-slide-', '');
                 e.redirect('#','preso', preso.id(), 'edit', slide_id);
               })
@@ -733,8 +734,8 @@
             .find('textarea[name="slide[content]"]')
               .tabby()
               .bind('keyup', function(ev) {
-                if ((ev.which == $.ui.keyCode.ENTER) && ev.ctrlKey) {
-                  ev.preventDefault();
+                if ((ev.which == $.ui.keyCode.RIGHT) && ev.ctrlKey) {
+                  ev.stopImmediatePropagation();
                   $(this).parents('form').submit();
                 } else {
                   slide_preview.drawPreview($(this).val());

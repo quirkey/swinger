@@ -43,7 +43,7 @@
 }
 .slide .content pre {
   font-family: Inconsolata, Monaco, Courier, mono;
-  font-size: 80%;
+  font-size: 100%;
 }
 .slide .content em {
   font-style: italic;
@@ -332,6 +332,7 @@ pre.sh_sourceCode .sh_value{color:#f00;font-weight:normal;font-style:normal;}
 .sammy pre.prettyprint {
   margin: 2% 0;
   padding: 2%;
+  word-spacing: 0.1em;
 }
 .sammy pre.sh_sourceCode{background-color:#ECECEC;color:#000;font-weight:normal;font-style:normal;}
 .sammy pre.sh_sourceCode .sh_keyword{color:#66B0D6;font-weight:bold;font-style:normal;}
