@@ -2,6 +2,8 @@
 
 Swinger is a couchapp for creating and showing Presentations. Think Keynote, stored in CouchDB, run via Javascript and Sammy.js.
 
+A free hosted version of the application lives at [http://swinger.quirkey.com](http://swinger.quirkey.com)
+
 # !NOTE!
 
 The codebase is currently in flux while I'm working out authentication stuff. Unfortunately, the CouchDB's new authentication features are slated for version 0.11 but only available in CouchDB trunk. Therefore, the current state of swinger only works on CouchDB trunk. If you're on OSX you can easily [grab the latest CouchDBX nightly](http://couch.lstoll.net/nightly/).
@@ -12,7 +14,7 @@ This was created as a Demo for my talk at jQuery Conf 2009 about Sammy.js, howev
 
 ## Requirements
 
-* A running CouchDB server
+* A running CouchDB server (>= 0.11)
 * [CouchApp](http://github.com/couchapp/couchapp) - You need the latest and greatest couchapp for the push to work without errors. Follow [these instructions](http://wiki.github.com/couchapp/couchapp/manual-2) to install from source
 
 ## Usage
@@ -48,4 +50,4 @@ Swinger was greatly inspired by Pat Nakajima's [Slidedown](http://github.com/nak
 * [CouchApp](http://github.com/couchapp/couchapp) for hosting the app in CouchDB
 * [Aristo CSS](http://github.com/maccman/aristo/tree/master) for base buttons/styles
 * [Showdown](http://attacklab.net/showdown/) for Markdown
-* [SHJS](http://shjs.sourceforge.net/) for Code higlighting
+* [Prettify](http://code.google.com/p/google-code-prettify/) for Code higlighting
