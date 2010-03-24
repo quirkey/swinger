@@ -728,6 +728,7 @@
             // jump to the right slide in the slide sort
             .filter('#sort-slide-' + e.params.slide_id).each(function() {
               var $slide = $(this);
+              $slide.addClass('selected');
               setTimeout(function() { 
                 var top = $slide.offset().top - 160;
                 Sammy.log('top', top);
