@@ -254,7 +254,7 @@
       this.database.saveDoc(this.attributes, Preso.mergeCallbacks({
         success: function(resp) {
           Sammy.log('preso.save', self, resp);
-          $.extend(self.attributes, resp);
+          $.extend(self.attributes, {id: resp['id'], rev: resp['rev']});
           if (callback) { callback.apply(self, [resp]); }
         }
       }));

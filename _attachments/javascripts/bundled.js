@@ -14188,12 +14188,23 @@ return "~E"+_b6+"E";
 
   Sammy = Sammy || {};
   
+  function parseValue(value) {
+    value = unescape(value);
+    if (value === "true") {
+      return true;
+    } else if (value === "false") {
+      return false;
+    } else {
+      return value;
+    }
+  };
+  
   function parseNestedParam(field_value, field_name, params) {
     var match, name, rest;
   
     if (field_name.match(/^[^\[]+$/)) {
       // basic value
-      params[field_name] = unescape(field_value);
+      params[field_name] = parseValue(field_value);
     } else if (match = field_name.match(/^([^\[]+)\[\](.*)$/)) {
       // array
       name = match[1];
@@ -14218,9 +14229,9 @@ return "~E"+_b6+"E";
       } else {
         // array is at the end of the parameter string
         if (params[name]) {
-          params[name].push(unescape(field_value));
+          params[name].push(parseValue(field_value));
         } else {
-          params[name] = [unescape(field_value)];
+          params[name] = [parseValue(field_value)];
         }          
       }
     } else if (match = field_name.match(/^([^\[]+)\[([^\[]+)\](.*)$/)) {
@@ -14322,9 +14333,9 @@ return "~E"+_b6+"E";
     if (typeof attributes != 'undefined') {
       $.each(attributes, function(key, value) {
         if (value != null) {
-          html += " " + key + "=\"";
+          html += " " + key + "='";
           html += getStringContent(attributes, value);
-          html += "\"";
+          html += "'";
         }
       });
     }
@@ -14415,7 +14426,11 @@ return "~E"+_b6+"E";
     
     checkbox: function(keypath, value, attributes) {
       var content = "";
-      content += this.hidden(keypath, {'value': !value});
+      if (!attributes) { attributes = {}; }
+      if (attributes.hidden_element !== false) {
+        content += this.hidden(keypath, {'value': !value});
+      }
+      delete attributes['hidden_element'];
       content += this.radio(keypath, value, $.extend({type: 'checkbox'}, attributes));
       return content;
     },

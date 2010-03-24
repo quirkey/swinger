@@ -17,9 +17,9 @@
     if (typeof attributes != 'undefined') {
       $.each(attributes, function(key, value) {
         if (value != null) {
-          html += " " + key + "=\"";
+          html += " " + key + "='";
           html += getStringContent(attributes, value);
-          html += "\"";
+          html += "'";
         }
       });
     }
@@ -110,7 +110,11 @@
     
     checkbox: function(keypath, value, attributes) {
       var content = "";
-      content += this.hidden(keypath, {'value': !value});
+      if (!attributes) { attributes = {}; }
+      if (attributes.hidden_element !== false) {
+        content += this.hidden(keypath, {'value': !value});
+      }
+      delete attributes['hidden_element'];
       content += this.radio(keypath, value, $.extend({type: 'checkbox'}, attributes));
       return content;
     },
