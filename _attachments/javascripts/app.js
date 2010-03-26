@@ -279,7 +279,8 @@
           transition: "",
           theme: this.attributes.theme || 'basic',
           additional_css: "",
-          position: num + 1
+          position: num + 1,
+          next_on_list: true
         };
       }
       if (typeof update != 'undefined') {
@@ -529,6 +530,9 @@
         display_slide.goTo(slide.position, slide.transition);
         display_slide.setCSS();
         current_slide = slide.position;
+        if (slide.next_on_list) {
+          display_slide.$element.find('li').addClass('notviewed');
+        }
         // set the jump input
         $('.jump input[name="num"]').val(current_slide);
       },
@@ -885,6 +889,15 @@
       e.withCurrentPreso(function(preso) {
         var total_slides = preso.slides().length;
         e.log('total_slides', total_slides, 'current_slide', current_slide);
+        if (preso.slide(current_slide).next_on_list) {
+          // deal with nexting on lists
+          var $list_items = $('#display .slide.active li.notviewed');
+          e.log('next on list', 'list_items', $list_items);
+          if ($list_items.length > 0) {
+            $list_items.eq(0).removeClass('notviewed');
+            return;
+          }
+        } 
         if (current_slide && (current_slide + 1) <= total_slides) {
           current_slide += 1
         } else {

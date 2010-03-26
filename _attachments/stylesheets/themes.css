@@ -75,6 +75,9 @@
   line-height: 100%;
   padding: 2% 1%;
 }
+.slide .content li.notviewed {
+  opacity: 0.5;
+}
 
 pre.prettyprint {background-color:#fff;color:#000;font-weight:normal;font-style:normal;}
 pre.prettyprint .str{color:#f00;}
