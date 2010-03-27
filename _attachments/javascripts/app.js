@@ -531,7 +531,9 @@
         display_slide.setCSS();
         current_slide = slide.position;
         if (slide.next_on_list) {
-          display_slide.$element.find('li').addClass('notviewed');
+          display_slide.$element
+            .filter('.active')
+              .find('li').addClass('notviewed');
         }
         // set the jump input
         $('.jump input[name="num"]').val(current_slide);

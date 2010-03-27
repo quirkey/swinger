@@ -1,60 +1,59 @@
 <div class="slide-edit">
   <div class="slide-edit-view">
-  <h3 class="header"><%= preso.attributes.name %>: Slide #<%= slide.position %></h3>
-  <div class="slide-form">
-    <h3>Slide Content</h3>
-    <form action="#/preso/<%= preso.id() %>/edit/<%= params.slide_id %>" method="post">
-      <p><textarea class="content-textarea" name="slide[content]"><%= slide.content %></textarea></p>
-      <p><label>Theme:</label>
-        <select name="slide[theme]" class="theme-select">
-          <% $.each(themes, function(i, v) { %>
-            <option value="<%= v %>"<% if (slide.theme == v) { %> selected="selected"<% } %>><%= v %></option>
-          <% }); %>
-        </select>
-        <!-- <label>Transition:</label>
-          <select name="slide[transition]" class="transition-select">
-            <% $.each(transitions, function(i, v) { %>
-              <option value="<%= v %>"<% if (slide.transition == v) { %> selected="selected"<% } %>><%= v %></option>
-            <% }); %>
-          </select>  -->
-      </p>
-      <input type="hidden" name="slide[next_on_list]" value="true" />
-      <p>
-        <label>Additional Styles:</label>
-      </p>
-      <p>
-        <textarea name="slide[additional_css]"><%= slide.additional_css %></textarea>
-      </p>
-      <p>
-        <% if ((slide.position - 1) > 0) { %>
-        <button class="linked-button" name="prev" rel="#/preso/<%= preso.attributes._id %>/edit/<%= slide.position - 1 %>">Previous</button>
-        <% } %>
-        <button type="submit" class="submit default">Save &amp; Next</button>
-        <button class="linked-button submit" name="display" rel="#/preso/<%= preso.attributes._id %>/display/<%= slide.position %>">Preview</button>
-      </p>
-    </form>
-    <div id="upload_form">
-    </div>
-  </div>
-  <div class="slide-preview">
-    <div class="slide active">
-      <div class="content"></div>
-    </div>
-  </div>
-  <div class="clear"></div>
-  </div>
-  <div class="slide-sort-view">
-    <h4 class="header">Slides</h4>
-    <div class="slide-sort">
-      <div class="slides">
-      <% $.each(preso.attributes.slides, function(i, sort_slide) { %>
-        <% if (sort_slide) { %>
-        <div class="slide <%= sort_slide.theme %> active" id="sort-slide-<%= sort_slide.position %>" style="<%= sort_slide.additional_css %>">
-          <div class="content"><%= sort_slide.content_html %></div>
+    <h3 class="header"><%= preso.attributes.name %>: Slide #<%= slide.position %></h3>
+    <div class="slide-form">
+      <h3>Slide Content</h3>
+      <% formFor('slide', slide, function(f) { %>
+        <%= f.open({action: "#/preso/" + preso.id() + "/edit/" + params.slide_id}) %>
+        <p> 
+          <%= f.textarea('content') %>
+        </p>
+        <p>
+          <%= f.label('theme', 'Theme') %>
+          <%= f.select('theme', themes) %>
+        </p>
+        <p>
+          <%= f.label('next_on_list', 'Next enables list elements') %>
+          <%= f.checkbox('next_on_list') %>
+        </p>
+        <p>
+          <label>Additional Styles:</label>
+        </p>
+        <p>
+          <%= f.textarea('addtional_css') %>
+        </p>
+        <p>
+          <% if ((slide.position - 1) > 0) { %>
+            <button class="linked-button" name="prev" rel="#/preso/<%= preso.attributes._id %>/edit/<%= slide.position - 1 %>">Previous</button>
+            <% } %>
+            <button type="submit" class="submit default">Save &amp; Next</button>
+            <button class="linked-button submit" name="display" rel="#/preso/<%= preso.attributes._id %>/display/<%= slide.position %>">Preview</button>
+          </p>
+          <%= f.close() %>
+        <% }); %>
+        
+        <div id="upload_form">
         </div>
-        <% } %>
-      <% }); %>
+      </div>
+      <div class="slide-preview">
+        <div class="slide active">
+          <div class="content"></div>
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div class="slide-sort-view">
+      <h4 class="header">Slides</h4>
+      <div class="slide-sort">
+        <div class="slides">
+          <% $.each(preso.attributes.slides, function(i, sort_slide) { %>
+            <% if (sort_slide) { %>
+              <div class="slide <%= sort_slide.theme %> active" id="sort-slide-<%= sort_slide.position %>" style="<%= sort_slide.additional_css %>">
+                <div class="content"><%= sort_slide.content_html %></div>
+              </div>
+            <% } %>
+          <% }); %>
+        </div>
       </div>
     </div>
   </div>
-</div>
