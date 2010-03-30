@@ -292,7 +292,7 @@ iframe {
   font-family: Inconsolata, Monaco, Monospace;
   font-size: 14px;
 }
-.slide-form textarea.content-textarea {
+.slide-form textarea.slide-content {
   height: 300px;
   font-size: 18px;
 }

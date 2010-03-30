@@ -744,7 +744,7 @@
           
           $('.slide-form')
             // live preview of slide editing
-            .find('textarea[name="slide[content]"]')
+            .find('textarea.slide-content')
               .tabby()
               .bind('keyup', function(ev) {
                 if ((ev.which == $.ui.keyCode.RIGHT) && ev.ctrlKey) {
@@ -754,14 +754,14 @@
                   slide_preview.drawPreview($(this).val());
                 }
               }).trigger('keyup').focus().end()
-            .find('textarea[name="slide[additional_css]"]')
+            .find('textarea.slide-additional_css')
               .bind('keyup', function() {
                 var area = this;
                 slide_preview.$element.attr('style', function() {
                   return $(this).attr('style') + ';' + $(area).val();
                 });
               }).trigger('keyup').end()
-            .find('.theme-select')
+            .find('select.slide-theme')
               .bind('change', function() {
                 slide_preview.setTheme($(this).val());
               }).triggerHandler('change');
@@ -968,7 +968,7 @@
         .live('click', function(e) {
           var attachment_url = $(this).attr('rel');
           var attachment_name = $(this).text();
-          $('textarea[name="slide[content]"]').val(function(i, val) {
+          $('textarea.slide-content').val(function(i, val) {
              return val + "\n![" + attachment_name + "](" + attachment_url + ")";
           }).triggerHandler('keyup');
         });
@@ -1005,7 +1005,7 @@
         if ($('#display').length > 0) {
           new Slide('#display .slide').setCSS();
         } else {
-          $('textarea[name="slide[content]"]').trigger('keyup');
+          $('textarea.slide-content').trigger('keyup');
         }
         $('.slide-sort').trigger('resize');
         $('.slide-edit-view').trigger('resize');
