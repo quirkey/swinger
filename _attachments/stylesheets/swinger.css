@@ -119,17 +119,23 @@ iframe {
   right: 10px;
 }
 
-.modal {
+.modal, .inline-loader {
   opacity: 0.7;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   padding: 40px;
+  color: #FFF;
+  text-align: center;
+}
+.modal {
   position: absolute;
   top: 0;
   left: 0;
-  color: #FFF;
-  text-align: center;
   z-index: 400;
+}
+.inline-loader {
+  margin: 20px auto;
+  width: 40px;
 }
 .notification {
   width: 100%;
@@ -139,7 +145,7 @@ iframe {
   text-shadow: 0px 1px 1px #333;
 }
 
-#modal-loader {
+#modal-loader, .inline-loader {
   background: #000;
 }
 
