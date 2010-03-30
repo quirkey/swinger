@@ -14072,7 +14072,7 @@ return "~E"+_b6+"E";
   var srender = function(name, template, data) {
     // target is an optional element; if provided, the result will be inserted into it
     // otherwise the result will simply be returned to the caller   
-    var fn;
+    var fn, fn_text;
     if (srender_cache[name]) {
       fn = srender_cache[name];
     } else {
@@ -14083,26 +14083,28 @@ return "~E"+_b6+"E";
       // Generate a reusable function that will serve as a template
       // generator (and which will be cached).
       try {
-      fn = srender_cache[name] = new Function("obj",
-      "var p=[],print=function(){p.push.apply(p,arguments);};" +
+      
+        fn_text = "var p=[],print=function(){p.push.apply(p,arguments);};";
 
-      // Introduce the data as local variables using with(){}
-      "with(obj){p.push(\"" +
+        // Introduce the data as local variables using with(){}
+        fn_text += "with(obj){p.push(\"";
 
-      // Convert the template into pure JavaScript
+        // Convert the template into pure JavaScript
 
-        template
-          .replace(/[\r\t\n]/g, " ")
-          .replace(/\"/g, '\\"')
-          .split("<%").join("\t")
-          .replace(/((^|%>)[^\t]*)/g, "$1\r")
-          .replace(/\t=(.*?)%>/g, "\",$1,\"")
-          .split("\t").join("\");")
-          .split("%>").join("p.push(\"")
-          .split("\r").join("")
-        + "\");}return p.join('');");
+        fn_text += template
+            .replace(/[\r\t\n]/g, " ")
+            .replace(/\"/g, '\\"')
+            .split("<%").join("\t")
+            .replace(/((^|%>)[^\t]*)/g, "$1\r")
+            .replace(/\t=(.*?)%>/g, "\",$1,\"")
+            .split("\t").join("\");")
+            .split("%>").join("p.push(\"")
+            .split("\r").join("");
+            
+        fn_text += "\");}return p.join('');";
+        fn = srender_cache[name] = new Function("obj", fn_text);
       } catch(e) {
-        console.error(e);
+        Sammy.log(e);
       }
     }
 
@@ -14334,7 +14336,7 @@ return "~E"+_b6+"E";
       $.each(attributes, function(key, value) {
         if (value != null) {
           html += " " + key + "='";
-          html += getStringContent(attributes, value);
+          html += getStringContent(attributes, value).replace(/\'/g, "\'");
           html += "'";
         }
       });
@@ -14351,6 +14353,36 @@ return "~E"+_b6+"E";
     return html;
   };
   
+  // Sammy.FormBuilder is based very closely on the Rails FormBuilder classes. 
+  // Its goal is to make it easy to create HTML forms for creating and editing 
+  // JavaScript objects. It eases the process by auto-populating existing values
+  // into form inputs and creating input names suitable for parsing by 
+  // Sammy.NestedParams and other backend frameworks. 
+  //
+  // You initialize a Sammy.FormBuilder by passing the 'name' of the object and 
+  // the object itself. Once initialized you create form elements with the object's
+  // prototype methods. Each of these methods returns a string of HTML suitable for
+  // appending through a template or directly with jQuery.
+  // 
+  // === Example
+  //    
+  //      var item = {
+  //        name: 'My Item',
+  //        price: '$25.50',
+  //        meta: {
+  //          id: '123'
+  //        }
+  //      };
+  //      var form = new Sammy.FormBuilder('item', item);
+  //      form.text('name'); 
+  //      //=> <input type='text' name='item[form]' value='My Item' />
+  //
+  // Nested attributes can be accessed/referred to by a 'keypath' which is 
+  // basically a string representation of the dot notation.
+  //
+  //      form.hidden('meta.id'); 
+  //      //=> <input type='hidden' name='item[meta][id]' value='123' />
+  //
   Sammy.FormBuilder = function(name, object) {
     this.name   = name;
     this.object = object;
@@ -14358,44 +14390,68 @@ return "~E"+_b6+"E";
   
   $.extend(Sammy.FormBuilder.prototype, {
     
+    // creates the open <form> tag with the object attributes
     open: function(attributes) {
       return simple_element('form', $.extend({'method': 'post', 'action': '#/' + this.name + 's'}, attributes), false);
     },
     
+    // closes the <form>
     close: function() {
       return '</form>';
     },
     
+    // creates a label for @keypath@ with the text @content 
+    // with an optional @attributes@ object
     label: function(keypath, content, attributes) {
-      var attrs = {'for': this.attributesForKeyPath(keypath).name};
+      var attrs = {'for': this._attributesForKeyPath(keypath).name};
       return simple_element('label', $.extend(attrs, attributes), content);
     },
-        
+    
+    // creates a hidden <input> for @keypath@ with an optional @attributes@ object
     hidden: function(keypath, attributes) {
-      attributes = $.extend({type: 'hidden'}, this.attributesForKeyPath(keypath), attributes);
+      attributes = $.extend({type: 'hidden'}, this._attributesForKeyPath(keypath), attributes);
       return simple_element('input', attributes);
     },
         
+    // creates a text <input> for @keypath@ with an optional @attributes@ object
     text: function(keypath, attributes) {
-      attributes = $.extend({type: 'text'}, this.attributesForKeyPath(keypath), attributes);
+      attributes = $.extend({type: 'text'}, this._attributesForKeyPath(keypath), attributes);
       return simple_element('input', attributes);
     },
     
+    // creates a <textarea> for @keypath@ with an optional @attributes@ object
     textarea: function(keypath, attributes) {
       var current;
-      attributes = $.extend(this.attributesForKeyPath(keypath), attributes);
+      attributes = $.extend(this._attributesForKeyPath(keypath), attributes);
       current = attributes.value;
       delete attributes['value'];
       return simple_element('textarea', attributes, current);
     },
     
+    // creates a password <input> for @keypath@ with an optional @attributes@ object
     password: function(keypath, attributes) {
       return this.text(keypath, $.extend({type: 'password'}, attributes));
     },
     
+    // creates a <select> element for @keypath@ with the <option> elements 
+    // specified by an array in @options@. If @options@ is an array of arrays,
+    // the first element in each subarray becomes the text of the option and the
+    // second becomes the value.
+    // 
+    // === Example
+    // 
+    //     var options = [
+    //       ['Small', 's'],
+    //       ['Medium', 'm'],
+    //       ['Large', 'l']
+    //     ];
+    //     form.select('size', options);
+    //     //=> <select name='item[size]'><option value='s'>Small</option> ...
+    //     
+    // 
     select: function(keypath, options, attributes) {
       var option_html = "", selected;
-      attributes = $.extend(this.attributesForKeyPath(keypath), attributes);
+      attributes = $.extend(this._attributesForKeyPath(keypath), attributes);
       selected = attributes.value;
       delete attributes['value'];
       $.each(options, function(i, option) {
@@ -14413,9 +14469,13 @@ return "~E"+_b6+"E";
       return simple_element('select', attributes, option_html);
     },
     
+    // creates a radio <input> for keypath with the value @value@. Multiple
+    // radios can be created with different value, if @value@ equals the 
+    // current value of the key of the form builder's object the attribute 
+    // checked='checked' will be added.
     radio: function(keypath, value, attributes) {
       var selected;
-      attributes = $.extend(this.attributesForKeyPath(keypath), attributes);
+      attributes = $.extend(this._attributesForKeyPath(keypath), attributes);
       selected = attributes.value;
       attributes.value = getStringContent(this.object, value);
       if (selected == attributes.value) {
@@ -14424,6 +14484,18 @@ return "~E"+_b6+"E";
       return simple_element('input', $.extend({type:'radio'}, attributes));
     },
     
+    // creates a checkbox <input> for keypath with the value @value@. Multiple
+    // checkboxes can be created with different value, if @value@ equals the 
+    // current value of the key of the form builder's object the attribute 
+    // checked='checked' will be added.
+    //
+    // By default @checkbox()@ also generates a hidden element whose value is 
+    // the inverse of the value given. This is known hack to get around a common
+    // gotcha where browsers and jQuery itself does not include 'unchecked'
+    // elements in the list of submittable inputs. This ensures that a value
+    // should always be passed to Sammy and hence the server. You can disable
+    // the creation of the hidden element by setting the @hidden_element@ attribute
+    // to @false@
     checkbox: function(keypath, value, attributes) {
       var content = "";
       if (!attributes) { attributes = {}; }
@@ -14435,11 +14507,12 @@ return "~E"+_b6+"E";
       return content;
     },
     
+    // creates a submit <input> for @keypath@ with an optional @attributes@ object
     submit: function(attributes) {
       return simple_element('input', $.extend({'type': 'submit'}, attributes));
     },
     
-    attributesForKeyPath: function(keypath) {
+    _attributesForKeyPath: function(keypath) {
       var builder    = this,
           keys       = $.isArray(keypath) ? keypath : keypath.split(/\./), 
           name       = builder.name, 
@@ -14463,11 +14536,44 @@ return "~E"+_b6+"E";
     }
   });
   
+  // Sammy.Form is a Sammy plugin that adds form building helpers to a 
+  // Sammy.Application
   Sammy.Form = function(app) {
     
     app.helpers({
+      // simple_element is a simple helper for creating HTML tags. 
+      //
+      // === Arguments
+      //
+      // +tag+::        the HTML tag to generate e.g. input, p, etc/
+      // +attributes+:: an object representing the attributes of the element as
+      //                key value pairs. e.g. {class: 'element-class'}
+      // +content+::    an optional string representing the content for the 
+      //                the element. If ommited, the element becomes self closing
+      //
       simple_element: simple_element,
       
+      // formFor creates a Sammy.Form builder object with the passed @name@
+      // and @object@ and passes it as an argument to the @content_callback@.
+      // This is a shortcut for creating FormBuilder objects for use within
+      // templates.
+      //
+      // === Example
+      //
+      //      // in item_form.template
+      //      
+      //      <% formFor('item', item, function(f) { %>
+      //        <%= f.open({action: '#/items'}) %>
+      //        <p>
+      //          <%= f.label('name') %>
+      //          <%= f.text('name') %>
+      //        </p>
+      //        <p>
+      //          <%= f.submit() %>
+      //        </p>
+      //        <%= f.close() %>
+      //      <% }); %>
+      //      
       formFor: function(name, object, content_callback) {
         var builder;
         // define a form with just a name

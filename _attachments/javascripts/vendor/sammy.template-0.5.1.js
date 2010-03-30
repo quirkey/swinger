@@ -9,7 +9,7 @@
   var srender = function(name, template, data) {
     // target is an optional element; if provided, the result will be inserted into it
     // otherwise the result will simply be returned to the caller   
-    var fn;
+    var fn, fn_text;
     if (srender_cache[name]) {
       fn = srender_cache[name];
     } else {
@@ -20,26 +20,28 @@
       // Generate a reusable function that will serve as a template
       // generator (and which will be cached).
       try {
-      fn = srender_cache[name] = new Function("obj",
-      "var p=[],print=function(){p.push.apply(p,arguments);};" +
+      
+        fn_text = "var p=[],print=function(){p.push.apply(p,arguments);};";
 
-      // Introduce the data as local variables using with(){}
-      "with(obj){p.push(\"" +
+        // Introduce the data as local variables using with(){}
+        fn_text += "with(obj){p.push(\"";
 
-      // Convert the template into pure JavaScript
+        // Convert the template into pure JavaScript
 
-        template
-          .replace(/[\r\t\n]/g, " ")
-          .replace(/\"/g, '\\"')
-          .split("<%").join("\t")
-          .replace(/((^|%>)[^\t]*)/g, "$1\r")
-          .replace(/\t=(.*?)%>/g, "\",$1,\"")
-          .split("\t").join("\");")
-          .split("%>").join("p.push(\"")
-          .split("\r").join("")
-        + "\");}return p.join('');");
+        fn_text += template
+            .replace(/[\r\t\n]/g, " ")
+            .replace(/\"/g, '\\"')
+            .split("<%").join("\t")
+            .replace(/((^|%>)[^\t]*)/g, "$1\r")
+            .replace(/\t=(.*?)%>/g, "\",$1,\"")
+            .split("\t").join("\");")
+            .split("%>").join("p.push(\"")
+            .split("\r").join("");
+            
+        fn_text += "\");}return p.join('');";
+        fn = srender_cache[name] = new Function("obj", fn_text);
       } catch(e) {
-        console.error(e);
+        Sammy.log(e);
       }
     }
 

@@ -4,7 +4,7 @@
     <div class="slide-form">
       <h3>Slide Content</h3>
       <% formFor('slide', slide, function(f) { %>
-        <%= f.open({action: "#/preso/" + preso.id() + "/edit/" + params.slide_id}) %>
+        <%= f.open({action: '#/preso/' + preso.id() + '/edit/' + params.slide_id}) %>
         <p> 
           <%= f.textarea('content') %>
         </p>
