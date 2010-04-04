@@ -16,7 +16,8 @@
   
   var dbname = window.location.pathname.split('/')[1] || 'swinger',
       db     = $.couch.db(dbname),
-      default_slide_scale = {width: 1280, height: 650};
+      default_slide_scale = {width: 1280, height: 650},
+      window_dimensions;
   
   var showdown = new Showdown.converter();
   
@@ -49,11 +50,12 @@
     return showdown.makeHtml(new_text.join("\n"));
   };
   
-  function windowDimensions() {
-    return {
+  function windowDimensions(force) {
+    window_dimensions = (!force && window_dimensions) ? window_dimensions : {
       width: $(window).width(),
       height: $(window).height()
     };
+    return window_dimensions;
   };
   
   function timestamp() {
@@ -1002,6 +1004,7 @@
         });
         
       $(window).bind('resize', function() {
+        windowDimensions(true);
         if ($('#display').length > 0) {
           new Slide('#display .slide').setCSS();
         } else {
