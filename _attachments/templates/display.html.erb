@@ -1,3 +1,7 @@
+<div id="display-instructions">
+  Hey! You're watching "<%= preso.attributes.title %>", a presentation by <%= preso.attributes.author %>. 
+  Use the left and right arrow keys to navigate or press space bar to skip slides.
+</div>
 <div id="display" rel="<%= preso.id() %>">
   <div id="slides">
   <% $.each(preso.attributes.slides, function(i, slide) { %>

@@ -77,20 +77,6 @@
     }
   };
   
-  function showModal(status, message) {
-    var $notification = $('#modal-notification');
-    $notification
-      .attr('class', 'modal')
-      .addClass(status)   
-      .find('.message')
-        .html(message).end()
-      .find('button').one('click', function() {
-        $(this).parent().fadeOut(200);
-      }).focus().end()
-      .center()
-      .fadeIn(400);
-  };
-
   function showNotification(status, message) {
     var $notification = $('#inline-notification');
     $notification
@@ -420,7 +406,7 @@
     }
   });
    
-  var app = $.sammy(function() {
+  var app = $.sammy('#container', function() {
     this.use(Sammy.Template);
     this.use(Sammy.NestedParams);
     this.use(Sammy.Form);
@@ -429,7 +415,6 @@
     this.setTitle('// Swinger //');
     
     this.debug = true;
-    this.element_selector = '#container';
     this.template_engine = 'template';   
     
     var current_preso = false;
@@ -604,6 +589,7 @@
     this.post('#/login', function(e) {
       User.login(this.params['name'], this.params['password'], function(user) {
         showNotification('success', 'Thanks for logging in, ' + user.name + '!');
+        e.log('last', e.app.last_location_before_redirect);
         e.redirect(e.app.last_location_before_redirect || '#/');
         e.app.last_location_before_redirect = null;
       })
