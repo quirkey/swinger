@@ -449,6 +449,7 @@
     };
     
     this.helpers({
+      show_instructions: true,
       themes: [
         'basic',
         'nakajima',
@@ -533,6 +534,20 @@
           $(this).attr('href', context.join('/','#', 'preso', preso.id(), meth));
         });
         $('.preso-links').show();
+      },
+      possiblyShowInstructions: function() {
+        if (this.show_instructions === true) {
+          this.show_instructions = setTimeout(function() {
+            $('#display-instructions').slideDown();
+          }, 5000);
+        }
+      },
+      hideInstructions: function() {
+        if (this.show_instructions > 0) {
+          clearInterval(this.show_instructions);
+          $('#display-instructions').hide();
+          this.show_instructions = false;
+        } 
       }
     });
     
@@ -785,6 +800,7 @@
         } else {
           e.partial('templates/display.html.erb', function(display) {
             e.$element().html(display);
+            e.possiblyShowInstructions();
             e.displaySlide(preso.slide(e.params.slide_id));
             $('#display .slide').swipe({
               threshold: {
@@ -876,6 +892,7 @@
     
     this.bind('display-nextslide', function() {
       var e = this;
+      e.hideInstructions();
       e.withCurrentPreso(function(preso) {
         var total_slides = preso.slides().length;
         e.log('total_slides', total_slides, 'current_slide', current_slide);
@@ -900,6 +917,7 @@
     
     this.bind('display-prevslide', function() {
       var e = this;
+      e.hideInstructions();
       e.withCurrentPreso(function(preso) {
         var total_slides = preso.slides().length;
         e.log('total_slides', total_slides, 'current_slide', current_slide);

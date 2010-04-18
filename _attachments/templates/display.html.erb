@@ -1,5 +1,5 @@
-<div id="display-instructions">
-  Hey! You're watching "<%= preso.attributes.title %>", a presentation by <%= preso.attributes.author %>. 
+<div id="display-instructions" style="display:none;">
+  Hey! You're watching "<%= preso.attributes.name %>", a presentation by <%= preso.attributes.author %>.<br />
   Use the left and right arrow keys to navigate or press space bar to skip slides.
 </div>
 <div id="display" rel="<%= preso.id() %>">

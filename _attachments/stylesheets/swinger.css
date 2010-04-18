@@ -328,7 +328,17 @@ iframe {
   width: 180px;
   height: 180px;
 }
-
+#display-instructions {
+  position: absolute; 
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  padding: 10px 0px;
+  text-align:center;
+  line-height: 120%;
+  background: #FFFEDD;
+  border-bottom: 1px solid #CCC;
+}
 
 .slide {
   float:left;
