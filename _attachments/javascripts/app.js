@@ -24,6 +24,8 @@
   var end_block_re = /^\s*@@@\s*$/;
   var start_block_re = /@@@\s([\w\d]+)\s*/;
   
+  var show_instructions = true;
+  
   function markdown(text) {
     // includes special code block handling
     var new_text = [],
@@ -449,7 +451,6 @@
     };
     
     this.helpers({
-      show_instructions: true,
       themes: [
         'basic',
         'nakajima',
@@ -536,18 +537,19 @@
         $('.preso-links').show();
       },
       possiblyShowInstructions: function() {
-        if (this.show_instructions === true) {
-          this.show_instructions = setTimeout(function() {
+        if (show_instructions === true) {
+          show_instructions = setTimeout(function() {
             $('#display-instructions').slideDown();
           }, 5000);
         }
       },
       hideInstructions: function() {
-        if (this.show_instructions > 0) {
-          clearInterval(this.show_instructions);
+        this.log('hideInstructions', show_instructions);
+        if (show_instructions > 0) {
+          clearInterval(show_instructions);
           $('#display-instructions').hide();
-          this.show_instructions = false;
-        } 
+        }
+        show_instructions = false;
       }
     });
     
