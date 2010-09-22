@@ -1,8 +1,8 @@
 ;(function($) {
-  
+
   $.easing.def = 'easeInOutCubic';
   $.fn.tabby.defaults.tabString = "  ";
-  
+
   $.fn.center = function() {
     var dimensions = windowDimensions();
     $(this).each(function() {
@@ -13,19 +13,19 @@
     });
     return this
   };
-  
+
   var dbname = window.location.pathname.split('/')[1] || 'swinger',
       db     = $.couch.db(dbname),
       default_slide_scale = {width: 1280, height: 650},
       window_dimensions;
-  
+
   var showdown = new Showdown.converter();
-  
+
   var end_block_re = /^\s*@@@\s*$/;
   var start_block_re = /@@@\s([\w\d]+)\s*/;
-  
+
   var show_instructions = true;
-  
+
   function markdown(text) {
     // includes special code block handling
     var new_text = [],
@@ -51,7 +51,7 @@
     });
     return showdown.makeHtml(new_text.join("\n"));
   };
-  
+
   function windowDimensions(force) {
     window_dimensions = (!force && window_dimensions) ? window_dimensions : {
       width: $(window).width(),
@@ -59,31 +59,31 @@
     };
     return window_dimensions;
   };
-  
+
   function timestamp() {
     return Math.round(new Date().getTime() / 1000);
   }
-  
+
   function preloadImages() {
-    var d=document; 
+    var d=document;
     Sammy.log('preloadImages', arguments);
-    if(d.images){ 
+    if(d.images){
       if(!d.MM_p) d.MM_p=new Array();
-      var i,j=d.MM_p.length,a=arguments; 
+      var i,j=d.MM_p.length,a=arguments;
       for(i=0; i<a.length; i++) {
-        if (a[i].indexOf("#")!=0) { 
-          d.MM_p[j]=new Image; 
+        if (a[i].indexOf("#")!=0) {
+          d.MM_p[j]=new Image;
           d.MM_p[j++].src=a[i];
         }
       }
     }
   };
-  
+
   function showNotification(status, message) {
     var $notification = $('#inline-notification');
     $notification
       .attr('class', 'notification')
-      .addClass(status)   
+      .addClass(status)
       .find('.message')
         .html(message).end()
       .find('button').one('click', function() {
@@ -94,8 +94,8 @@
       $notification.slideUp();
     }, 6000)
   };
-  
-  
+
+
   User = {
     _current_user: false,
     isLoggedIn: function() {
@@ -141,7 +141,7 @@
         error: function(code, error, reason) {
           showNotification('error', reason);
         }
-      });     
+      });
     },
     signup: function(name, email, password, callback) {
       $.couch.signup({name: name, email: email}, password, {
@@ -154,8 +154,8 @@
       })
     }
   };
-  
-  
+
+
   Preso = function(doc) {
     var default_doc = {
       name: "",
@@ -166,7 +166,7 @@
     this.database   = db;
     this.attributes = $.extend({}, default_doc, doc);
   };
-  
+
   Preso.default_callbacks = {
     success: function(resp) {
       Sammy.log('default success', resp);
@@ -176,11 +176,11 @@
       showNotification('error', reason);
     }
   };
-    
+
   Preso.mergeCallbacks = function(callbacks) {
     return $.extend({}, Preso.default_callbacks, callbacks);
   };
-  
+
   Preso.find = function(id, success) {
     db.openDoc(id, Preso.mergeCallbacks({
       success: function(resp) {
@@ -193,7 +193,7 @@
       }
     }));
   };
-  
+
   Preso.all = function(success) {
     db.view('swinger/presos', Preso.mergeCallbacks({
       descending: true,
@@ -206,7 +206,7 @@
       }
     }));
   };
-  
+
   Preso.byUser = function(name, success) {
     db.view('swinger/presos_by_user', Preso.mergeCallbacks({
       startkey: [name, "a"],
@@ -223,7 +223,7 @@
       }
     }));
   };
-  
+
   $.extend(Preso.prototype, new Sammy.Object, {
     id: function() {
       return this.attributes['_id'];
@@ -284,26 +284,26 @@
       return this.attributes.slides;
     }
   });
-  
-  
+
+
   Slide = function(selector) {
     this.selector = selector;
     this.$element  = $(selector);
   };
-  
+
   $.extend(Slide.prototype, {
     goTo: function(num, transition) {
       // slide left
       var dimensions   = windowDimensions();
           total_slides = this.$element.length,
           slide = this;
-          
+
       switch(transition) {
         case 'fade':
           this.$element.css({top: '0px', left: '0px', opacity: 0, zIndex: 0}).removeClass('active');
-          var $current = this.$element.filter('.active'), 
+          var $current = this.$element.filter('.active'),
               $next = this.$slide(num);
-              
+
           $current
             .css({opacity: 1, position:'absolute', top: '0px', left: '0px'})
             .animate({opacity: 0}, function() {
@@ -342,7 +342,7 @@
     setContentRatio: function(dimensions, attempts) {
       if (!dimensions) dimensions = windowDimensions();
       if (!attempts) attempts = 1;
-      var slide = this, 
+      var slide = this,
           ratio = Math.floor((dimensions.width / default_slide_scale.width) * 100);
       // Sammy.log('setContentRatio', dimensions, ratio);
       this.$element
@@ -399,7 +399,7 @@
             width = ((windowDimensions().width - width_offset) / 2),
             height = Math.floor((width * 0.75)),
             dimensions= {width: width, height: height};
-        slide.setContent(markdown(val));  
+        slide.setContent(markdown(val));
         slide.setCSS(dimensions);
       }, 200);
     },
@@ -407,21 +407,21 @@
       return this.$element.filter('#slide-' + num);
     }
   });
-   
+
   var app = $.sammy('#container', function() {
     this.use(Sammy.Template);
     this.use(Sammy.NestedParams);
     this.use(Sammy.Form);
     this.use(Sammy.Title);
-    
+
     this.setTitle('// Swinger //');
-    
+
     this.debug = true;
-    this.template_engine = 'template';   
-    
+    this.template_engine = 'template';
+
     var current_preso = false;
     var current_slide = 1;
-        
+
     var display_keymap = {
       37: 'display-prevslide', // left arrow
       38: 'display-prevslide', // up arrow
@@ -430,8 +430,8 @@
       32: 'display-togglenav', // space
       27: 'display-exit' // esc
     };
-    
-    
+
+
     function showLoader() {
       var dimensions = windowDimensions()
       $('#modal-loader').css({
@@ -440,16 +440,16 @@
       });
       $('#modal-loader').show();
     };
-    
+
     function hideLoader() {
       $('#modal-loader').hide();
     };
-    
+
     this.swap = function(newcontent) {
       hideLoader();
       this.$element().html(newcontent);
     };
-    
+
     this.helpers({
       themes: [
         'basic',
@@ -481,7 +481,7 @@
       isLoggedInAs: function(username) {
         return User.isLoggedIn() && User._current_user.name == username;
       },
-      showNav: function() { 
+      showNav: function() {
         $('.nav, .user-nav, #footer').show().find('.preso-links').hide();
       },
       hideNav: function() {
@@ -545,14 +545,14 @@
       },
       hideInstructions: function() {
         this.log('hideInstructions', show_instructions);
-        if (show_instructions > 0) {
+        if (show_instructions !== true) {
           clearInterval(show_instructions);
           $('#display-instructions').hide();
         }
         show_instructions = false;
       }
     });
-    
+
     this.around(function(callback) {
       var context = this;
       User.current(function(user) {
@@ -560,7 +560,7 @@
         callback();
       });
     });
-    
+
     this.before({only: /\#\/(create|new|preso\/([^\/]+)\/edit)$/}, function() {
       if (!User.isLoggedIn()) {
        showNotification('error', 'Sorry, please login or signup to create a presentation.');
@@ -573,7 +573,7 @@
    this.before({except: /display/}, function() {
      this.showNav();
    });
-    
+
     this.get('#/', function(e) {
       this.title('Welcome');
       showLoader();
@@ -597,12 +597,12 @@
         });
       });
     });
-    
+
     this.get('#/login', function(e) {
       this.title('Login')
       e.partial('templates/login.html.erb');
     });
-    
+
     this.post('#/login', function(e) {
       User.login(this.params['name'], this.params['password'], function(user) {
         showNotification('success', 'Thanks for logging in, ' + user.name + '!');
@@ -610,8 +610,8 @@
         e.redirect(e.app.last_location_before_redirect || '#/');
         e.app.last_location_before_redirect = null;
       })
-    });    
-    
+    });
+
     this.get('#/logout', function(e) {
       User.logout(function() {
         e.showLoggedIn(false);
@@ -622,12 +622,12 @@
 
     this.post('#/signup', function(e) {
       // validate
-      if (this.params.has('name') && 
-          this.params.has('email') && 
-          this.params.has('password') && 
+      if (this.params.has('name') &&
+          this.params.has('email') &&
+          this.params.has('password') &&
           this.params.has('password_confirmation') &&
           this.params['password'] === this.params['password_confirmation']) {
-            
+
         // create
         User.signup(this.params['name'], this.params['email'], this.params['password'], function() {
           showNotification('success', 'Thanks for signing up! You can start making presentations now.');
@@ -640,7 +640,7 @@
         // invalid
       }
     });
-    
+
     this.get('#/new', function(e) {
       this.title('New Presentation')
       this.partial('templates/form.html.erb', {preso: new Preso(), form_action: '#/create'}, function(html) {
@@ -648,7 +648,7 @@
         new Slide('.slide').setCSS({width: 150, height: 150});
       });
     });
-    
+
     this.post('#/create', function(e) {
       var preso = new Preso($.extend({}, e.params['preso'], {user: User._current_user.name}));
       preso.save(function() {
@@ -656,7 +656,7 @@
         e.redirect('#', 'preso', this.attributes._id, 'edit', '1');
       });
     });
-    
+
     this.get('#/preso/:id/edit', function(e) {
       showLoader();
       e.withCurrentPreso(function(preso) {
@@ -668,7 +668,7 @@
         });
       });
     });
-    
+
     this.post('#/preso/:id/edit', function(e) {
       showLoader();
       e.withCurrentPreso(function(preso) {
@@ -680,7 +680,7 @@
         });
       });
     });
-    
+
     this.get('#/preso/:id/delete', function(e) {
       e.withCurrentPreso(function(preso) {
         if (confirm('Are you sure you want to delete this presentation? There is no undo.')) {
@@ -694,7 +694,7 @@
         }
       });
     })
-        
+
     this.get('#/preso/:id/edit/:slide_id', function(e) {
       showLoader();
       e.withCurrentPreso(function(preso) {
@@ -708,7 +708,7 @@
           var slide_preview = new Slide('.slide-preview .slide');
           var slide_sort = new Slide('.slide-sort .slide');
           slide_sort.setCSS({width: 160, height: 160});
-          
+
           $('.slide-sort')
             // set up the sortable
             .sortable({
@@ -731,7 +731,7 @@
                     $slide_num = $slide.find('.slide-num');
                 if ($slide_num.length === 0) {
                   $slide_num = $('<div/>', {'class': 'slide-num'}).hide().appendTo($slide);
-                } 
+                }
                 $slide_num.text(slide_id).show();
               }, function() {
                 $(this).find('.slide-num').hide();
@@ -740,13 +740,13 @@
             .filter('#sort-slide-' + e.params.slide_id).each(function() {
               var $slide = $(this);
               $slide.addClass('selected');
-              setTimeout(function() { 
+              setTimeout(function() {
                 var top = $slide.offset().top - 160;
                 Sammy.log('top', top);
                 $('.slide-sort').scrollTop(top)
               }, 100);
             });
-          
+
           $('.slide-form')
             // live preview of slide editing
             .find('textarea.slide-content')
@@ -774,7 +774,7 @@
         });
       });
     });
-    
+
     this.post('#/preso/:id/edit/:slide_id', function(e) {
       e.withCurrentPreso(function(preso) {
         preso.slide(e.params.slide_id, $.extend({}, e.params['slide'], {
@@ -786,11 +786,11 @@
         });
       });
     });
-    
+
     this.get('#/preso/:id/display', function() {
       this.redirect('#', 'preso', this.params.id, 'display', '1');
     });
-    
+
     this.get('#/preso/:id/display/:slide_id', function(e) {
       this.hideNav();
       e.withCurrentPreso(function(preso) {
@@ -811,11 +811,11 @@
               },
               swipeLeft: function() {
                  e.log('swipeLeft');
-                 e.trigger('display-nextslide'); 
+                 e.trigger('display-nextslide');
               },
-              swipeRight: function() { 
+              swipeRight: function() {
                 e.log('swipeRight');
-                e.trigger('display-prevslide'); 
+                e.trigger('display-prevslide');
               }
             }).dblclick(function() {
               e.trigger('display-togglenav');
@@ -824,14 +824,14 @@
         }
       });
     });
-    
+
     this.get('#/preso/:id/export', function(e) {
       e.withCurrentPreso(function(preso) {
         e.preso = preso;
         e.partial('templates/export.html.erb');
       });
     });
-    
+
     this.put('#/preso/:id/upload', function(e) {
       this.log(e.params);
       e.withCurrentPreso(function(preso) {
@@ -856,13 +856,13 @@
         });
       });
     });
-       
+
     this.post('#/preso/:id/jump', function(e) {
       e.withCurrentPreso(function(preso) {
         e.redirect('#', 'preso', preso.id(), 'display', this.params['num']);
       });
     });
-    
+
     this.bind('slide-sort', function(e, data) {
       this.log('slide-sort');
       var context = this,
@@ -871,7 +871,7 @@
           order = data['order'],
           slides = preso.slides(),
           new_slides = [];
-          
+
       // edit the slide order and position
       $.each(order, function(i, new_id) {
         var slide = slides[parseInt(new_id.replace(prefix, '')) - 1];
@@ -891,7 +891,7 @@
           .sortable('refresh');
       });
     });
-    
+
     this.bind('display-nextslide', function() {
       var e = this;
       e.hideInstructions();
@@ -906,7 +906,7 @@
             $list_items.eq(0).removeClass('notviewed');
             return;
           }
-        } 
+        }
         if (current_slide && (current_slide + 1) <= total_slides) {
           current_slide += 1
         } else {
@@ -916,7 +916,7 @@
         e.redirect('#', 'preso', preso.id(), 'display', current_slide);
       });
     });
-    
+
     this.bind('display-prevslide', function() {
       var e = this;
       e.hideInstructions();
@@ -932,11 +932,11 @@
         e.redirect('#', 'preso', preso.id(), 'display', current_slide);
       });
     });
-    
+
     this.bind('display-togglenav', function() {
       $('#navigation').toggle();
     });
-    
+
     this.bind('display-exit', function() {
       try {
         var e = this;
@@ -948,8 +948,8 @@
         e.log(error);
       }
     });
-    
-    
+
+
     this.bind('run', function() {
       // load time
       var context = this;
@@ -960,18 +960,18 @@
             context.app.trigger(display_keymap[e.which], {id: $('#display').attr('rel')});
           }
         });
-      
+
       $('.presos .preso')
         .live('click', function() {
           context.redirect('#', 'preso', $(this).attr('rel'), 'display', 1);
         });
-      
+
       $('.linked-button')
         .live('click', function(e) {
           e.preventDefault();
           context.redirect($(this).attr('rel'));
         });
-      
+
       $('.slide-attachment')
         .live('click', function(e) {
           var attachment_url = $(this).attr('rel');
@@ -980,7 +980,7 @@
              return val + "\n![" + attachment_name + "](" + attachment_url + ")";
           }).triggerHandler('keyup');
         });
-      
+
       // preso theme selection
       $('.themes .preso')
         .live('click', function() {
@@ -990,17 +990,17 @@
           $(this).addClass('selected');
           $(this).siblings('.preso').removeClass('selected');
         });
-        
+
       $('.slide-sort')
         .live('resize', function() {
           $(this).css('height', windowDimensions().height - $('#footer').outerHeight() - $(this).offset().top);
         });
-      
+
       $('.slide-edit-view')
         .live('resize', function() {
           $(this).css('width', windowDimensions().width - 202);
         });
-      
+
       $('#navigation')
         .find('.prev').live('click', function() {
           context.app.trigger('display-prevslide', {id: $('#display').attr('rel')});
@@ -1008,7 +1008,7 @@
         .find('.next').live('click', function() {
           context.app.trigger('display-nextslide', {id: $('#display').attr('rel')});
         });
-        
+
       $(window).bind('resize', function() {
         windowDimensions(true);
         if ($('#display').length > 0) {
@@ -1019,10 +1019,10 @@
         $('.slide-sort').trigger('resize');
         $('.slide-edit-view').trigger('resize');
       });
-        
+
     });
   });
-  
+
   $(function() {
     app.run('#/');
   });
