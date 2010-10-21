@@ -26,8 +26,8 @@
           <% if ((slide.position - 1) > 0) { %>
             <button class="linked-button" name="prev" rel="#/preso/<%= preso.attributes._id %>/edit/<%= slide.position - 1 %>">Previous</button>
             <% } %>
-            <button type="submit" class="submit default">Save &amp; Next</button>
-            <button class="linked-button submit" name="display" rel="#/preso/<%= preso.attributes._id %>/display/<%= slide.position %>">Preview</button>
+            <button type="submit" class="submit default" accesskey="s">Save &amp; Next</button>
+            <button class="linked-button submit" name="display" rel="#/preso/<%= preso.attributes._id %>/display/<%= slide.position %>" accesskey="p">Preview</button>
           </p>
           <%= f.close() %>
         <% }); %>
