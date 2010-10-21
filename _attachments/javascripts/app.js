@@ -456,7 +456,8 @@
         'nakajima',
         'quirkey',
         'nakajima-black',
-        'sammy'
+        'sammy',
+        'pb'
       ],
       transitions: [
         'switch',
