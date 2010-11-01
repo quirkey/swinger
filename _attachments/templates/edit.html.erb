@@ -5,7 +5,7 @@
       <h3>Slide Content</h3>
       <% formFor('slide', slide, function(f) { %>
         <%= f.open({action: '#/preso/' + preso.id() + '/edit/' + params.slide_id}) %>
-        <p> 
+        <p>
           <%= f.textarea('content') %>
         </p>
         <p>
@@ -31,7 +31,7 @@
           </p>
           <%= f.close() %>
         <% }); %>
-        
+
         <div id="upload_form">
         </div>
       </div>

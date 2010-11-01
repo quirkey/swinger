@@ -169,7 +169,7 @@ button:disabled, .button:disabled {
 ::-webkit-scrollbar-button:end:increment {
     display: block;
 }
- 
+
 /* Turn off the down area up on top, and up area on bottom */
 ::-webkit-scrollbar-button:start:increment,
 ::-webkit-scrollbar-button:end:decrement {
@@ -177,21 +177,21 @@ button:disabled, .button:disabled {
 }
 
 input[type="range"] {
-  -khtml-appearance: none; 
+  -khtml-appearance: none;
   -webkit-border-image: url(../images/slider-horizontal-track.png) 2 4 2 4 / 2px 4px 2px 4px repeat repeat;
   height: 5px;
   padding: 0;
 }
 
-::-webkit-slider-thumb { 
-  -khtml-appearance: none; 
-  background: url(../images/slider-knob.png) no-repeat; 
-  width: 23px; 
+::-webkit-slider-thumb {
+  -khtml-appearance: none;
+  background: url(../images/slider-knob.png) no-repeat;
+  width: 23px;
   height: 24px;
 }
 
 /*This doesn't seem to be implemented yet*/
-::-webkit-slider-thumb:active { 
+::-webkit-slider-thumb:active {
   background: url(../images/slider-knob-highlighted.png) no-repeat;
 }
 
@@ -245,7 +245,7 @@ nav a, .nav a {
   color: #A5A5A5;
   font-size: 12px;
   font-weight: normal;
-  text-shadow: 0px 1px 1px #000; 
+  text-shadow: 0px 1px 1px #000;
   text-decoration: none;
 }
 nav a:hover, nav a.active, .nav a:hover, .nav a.active {
@@ -253,5 +253,5 @@ nav a:hover, nav a.active, .nav a:hover, .nav a.active {
   background: -webkit-gradient(linear, left top, left bottom, from(#81AFC8), to(#BBE1F7));
   background: -moz-linear-gradient(left top, left bottom, from(#81AFC8), to(#BBE1F7));
   color: #1C4257;
-  text-shadow: 0px 1px 1px #FFF; 
+  text-shadow: 0px 1px 1px #FFF;
 }

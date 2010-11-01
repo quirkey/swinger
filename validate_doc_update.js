@@ -1,7 +1,7 @@
 function(newDoc, oldDoc, userCtx) {
 
   // !code lib/validate.js
-  
+
   var is_admin = userCtx.roles.indexOf('_admin') != -1
 
   // not logged in
@@ -11,13 +11,13 @@ function(newDoc, oldDoc, userCtx) {
   log(newDoc);
   log(oldDoc);
   log(userCtx);
-  
+
   // types we know about
   if (newDoc.type == 'presentation') {
-    
+
     require(newDoc.user, "You must be logged in to edit or create presentations.");
     require(newDoc.name, "name is required.");
-    
+
     if (!is_admin && (newDoc.user != userCtx.name || (oldDoc && oldDoc.user != userCtx.name))) {
       forbidden("Sorry, you can only edit your own presentations. Please fork this presentation to edit it.");
     }

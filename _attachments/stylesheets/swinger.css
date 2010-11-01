@@ -76,15 +76,15 @@ input[type="text"], input[type="password"], textarea {
   right: 10px;
   width: 200px;
   text-align: right;
-  text-shadow: 0px 1px 1px #000; 
+  text-shadow: 0px 1px 1px #000;
   color:#CCC;
 }
 .user-nav span {
   padding: 0px 5px;
 }
-.user-nav a:link, 
+.user-nav a:link,
 .user-nav a:visited,
-#footer a:link, 
+#footer a:link,
 #footer a:visited {
   color:#E7E7E7;
   text-decoration:none;
@@ -156,7 +156,7 @@ iframe {
   position: relative;
   border-bottom: 1px solid #FFF;
 }
-#modal-notification.success, 
+#modal-notification.success,
 .notification.success {
   background: #118F3A;
   color: #FFF;
@@ -329,7 +329,7 @@ iframe {
   height: 180px;
 }
 #display-instructions {
-  position: absolute; 
+  position: absolute;
   top: 0px;
   left: 0px;
   width: 100%;

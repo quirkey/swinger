@@ -5,9 +5,9 @@
 }
 
 @font-face {
-	font-family: 'BebasRegular';
-	src: url('fonts/bebas/BEBAS___.eot');
-	src: local('Bebas'), local('Bebas'), url('fonts/bebas/BEBAS___.woff') format('woff'), url('fonts/bebas/BEBAS___.ttf') format('truetype'), url('fonts/bebas/BEBAS___.svg#Bebas') format('svg');
+  font-family: 'BebasRegular';
+  src: url('fonts/bebas/BEBAS___.eot');
+  src: local('Bebas'), local('Bebas'), url('fonts/bebas/BEBAS___.woff') format('woff'), url('fonts/bebas/BEBAS___.ttf') format('truetype'), url('fonts/bebas/BEBAS___.svg#Bebas') format('svg');
 }
 
 
@@ -17,7 +17,7 @@
 .slide .content {
   font-size: 100%;
   line-height: 100%;
-  padding: 0 10%;  
+  padding: 0 10%;
 }
 .slide .content h1,
 .slide .content h2,
@@ -61,8 +61,8 @@
   line-height: 150%;
   font-style: italic;
 }
-.slide .content ul, 
-.slide .content ol, 
+.slide .content ul,
+.slide .content ol,
 .slide .content pre {
   text-align: left;
   line-height: 125%;
@@ -330,7 +330,7 @@ pre.sh_sourceCode .sh_value{color:#f00;font-weight:normal;font-style:normal;}
   color:#DC5164;
 }
 .slide.sammy .content ul li {
-  
+
 }
 .sammy pre.prettyprint {
   margin: 2% 0;
@@ -395,7 +395,7 @@ pre.sh_sourceCode .sh_value{color:#f00;font-weight:normal;font-style:normal;}
   color:#DC5164;
 }
 .slide.pb .content ul li {
-  
+
 }
 .pb pre.prettyprint {
   margin: 2% 0;

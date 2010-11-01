@@ -10,7 +10,7 @@
     <div class="preso-meta">
       <h4><%= preso.attributes.name %> <span><a href="#/preso/<%= preso.id() %>/display">Play</a></span></h4>
       <p>
-        by <%= preso.attributes.user %> 
+        by <%= preso.attributes.user %>
         <% if (isLoggedInAs(preso.attributes.user)) { %>
         / <a href="#/preso/<%= preso.id() %>/edit/1">Edit</a>
         <% } %>
