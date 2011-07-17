@@ -1,0 +1,30 @@
+[
+  {
+    "from":"",
+    "to":"index.html"
+  },
+  {
+    "from":"/swinger/*",
+    "to":"../../*"
+  },
+  {
+    "from":"/javascripts/*",
+    "to":"javascripts/*"
+  },
+  {
+    "from":"/images/*",
+    "to":"images/*"
+  },
+  {
+    "from":"/stylesheets/*",
+    "to":"stylesheets/*"
+  },
+  {
+    "from":"_session/*",
+    "to":"/_session/*"
+  },
+  {
+    "from":"/templates/*",
+    "to":"templates/*"
+  }
+]
